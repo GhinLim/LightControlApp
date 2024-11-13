@@ -23,12 +23,18 @@ qt_add_qml_module(appLightControlApp
         QML_FILES qml/PwmSetter.qml
         RESOURCES image/save.png
         RESOURCES image/pwmLogo.png
-        QML_FILES qml/PwmBoard.qml
+        QML_FILES qml/ParamBoard.qml
         QML_FILES qml/DoubleTabBar.qml
         QML_FILES qml/ControlPanel.qml
-        QML_FILES qml/ParamSetter.qml
+        QML_FILES qml/ChannelParamSetter.qml
         RESOURCES image/brightness.png image/colorTemp.png image/totalBrightness.png
         QML_FILES qml/ChannelParamBoard.qml
+        QML_FILES qml/ParamLabel.qml
+        QML_FILES
+        QML_FILES qml/OnlineParamBoard.qml
+        QML_FILES qml/HomePage.qml
+        RESOURCES
+        RESOURCES image/appLogo.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

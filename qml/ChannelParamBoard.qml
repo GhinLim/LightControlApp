@@ -3,17 +3,17 @@ import QtQuick.Layouts
 
 Row {
     spacing: 33
-    ParamSetter{
+    ChannelParamSetter{
         title:"Color Temperature"
         source:"../image/colorTemp.png"
         value: "123456"
     }
-    ParamSetter{
+    ChannelParamSetter{
         title: "Total Brightness"
         source: "../image/totalBrightness.png"
         value: "656544"
     }
-    ParamSetter{
+    ChannelParamSetter{
         title:"Brightness"
         source:"../image/brightness.png"
         value: "776"
