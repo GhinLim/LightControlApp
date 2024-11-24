@@ -5,11 +5,21 @@ import QtQuick.Controls.Material
 
 Item {
     id:root
+    property var innerModelData
+    property int value: innerModelData.value
     property alias titleText: titleText.text
-    property alias value: pwmValue.text
     property alias textFieldFocus: textField.focus
+    property alias pwmValue: pwmValue.text
+
+    function refreshData()
+    {
+        pwmValue.text = String(value)
+    }
+
     width: 500
     height: 100
+
+    onValueChanged: refreshData()
 
     MouseArea{
         anchors.fill: parent
@@ -42,13 +52,13 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 10
             Material.background: Material.Indigo
+            enabled: value !== Number(pwmValue.text)
             contentItem: Image {
                 scale: 1.6
                 anchors.centerIn: parent
-                id: name
                 source: "../image/save.png"
             }
-
+            onClicked:  innerModelData.value = Number(pwmValue.text)
         }
 
         RoundButton{
@@ -62,6 +72,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             Material.background: Material.Indigo
             Material.foreground: "white"
+            onClicked: {
+                var num = Number(pwmValue.text)
+                num--
+                pwmValue.text = String(num)
+            }
         }
 
         RoundButton{
@@ -75,6 +90,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             Material.background: Material.Indigo
             Material.foreground: "white"
+            onClicked: {
+                var num = Number(pwmValue.text)
+                num++
+                pwmValue.text = String(num)
+            }
         }
 
         TextField {
@@ -85,12 +105,16 @@ Item {
             height: 57
             visible: false
             selectByMouse: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            onTextChanged: {
+                pwmValue.text = textField.text
+            }
 
             // 当 TextField 失去焦点时隐藏它
             onFocusChanged: {
                 if (!focus) {
                     pwmValue.visible = true
-                    pwmValue.text = textField.text
                     textField.visible = false
                 }
             }
@@ -98,7 +122,6 @@ Item {
 
         NeonText {
             id: pwmValue
-            text: "999999"
             normalColor: "black"
             font.pixelSize: 45
             anchors.centerIn: parent

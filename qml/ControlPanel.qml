@@ -1,10 +1,13 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Controls.Material
+import LightController 1.0
+
 Item{
     id:root
     width: childrenRect.width
     height: childrenRect.height
-    property var model: 12
+    property var channelSetterList:LightController.channelSetterList
 
     function clearTextFieldFocus(){
         swipeView.currentItem.clearTextFieldFocus()
@@ -18,7 +21,7 @@ Item{
 
     DoubleTabBar{
         id:doubleTabBar
-        model:root.model
+        model:channelSetterList
         onSelectedIndexChanged: swipeView.currentIndex = selectedIndex
         anchors.horizontalCenter: swipeView.horizontalCenter
         anchors.horizontalCenterOffset: 20
@@ -39,18 +42,21 @@ Item{
         }
 
         Repeater{
-            model:root.model
+            model:channelSetterList
             ParamBoard{
-                model:12 /*modelData.xxmodel*/
+                channelSetter: modelData
             }
         }
 
-        onCurrentIndexChanged: doubleTabBar.selectedIndex = currentIndex
+        onCurrentIndexChanged: {
+            currentItem.refreshData()
+            doubleTabBar.selectedIndex = currentIndex
+        }
     }
 
     Label{
         id:title1
-        text:"Channel parameter setting"
+        text:"Channel Parameters"
         anchors.left: swipeView.left
         anchors.leftMargin: 46
         anchors.top:swipeView.top
@@ -61,9 +67,28 @@ Item{
         color: "black"
     }
 
+    Button {
+        id: saveBtn
+        anchors.right: swipeView.right
+        anchors.rightMargin: 50
+        anchors.verticalCenter: title1.verticalCenter
+        width: 56
+        height: 38
+        Material.background: Material.Indigo
+        layer.enabled: true
+        layer.smooth: true
+        contentItem: Image {
+            scale: 1.6
+            anchors.centerIn: parent
+            source: "../image/save.png"
+            fillMode: Image.PreserveAspectFit
+            smooth: true // 启用抗锯齿
+        }
+    }
+
     Label{
         id:title2
-        text:"PWM setting"
+        text:"PWMs "
         anchors.left: swipeView.left
         anchors.leftMargin: 46
         anchors.top:swipeView.top

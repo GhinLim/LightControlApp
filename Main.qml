@@ -1,9 +1,9 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 import QtQuick.Controls.Material
+import LightController 1.0
 import "qml"
 
-Window {
+ApplicationWindow {
     id: mainWindow
     visible: true
     width: 950
@@ -11,9 +11,10 @@ Window {
     minimumWidth:950
     minimumHeight: 1080
     Material.accent: Material.Indigo
-    title: "Lighting Control System"
+    title: "Lighting Controller"
 
     HomePage{
+        lightController: LightController
         id:homePage
         anchors.fill: parent
     }
