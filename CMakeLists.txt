@@ -5,7 +5,7 @@ project(LightControlApp VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.2 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Quick SerialPort)
 
 
 qt_add_executable(appLightControlApp
@@ -38,6 +38,13 @@ qt_add_qml_module(appLightControlApp
         SOURCES LightController.h LightController.cpp
         SOURCES OnlineParam.h OnlineParam.cpp
         RESOURCES image/setting.png
+        SOURCES SettingManager.h SettingManager.cpp
+        SOURCES SerialCom.h SerialCom.cpp
+        QML_FILES qml/SettingPage.qml
+        RESOURCES image/back.png
+        QML_FILES qml/ComSettingItem.qml
+        QML_FILES qml/SettingBoard.qml
+        QML_FILES qml/PwmHzSetting.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -52,7 +59,7 @@ set_target_properties(appLightControlApp PROPERTIES
 )
 
 target_link_libraries(appLightControlApp
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick Qt6::SerialPort
 )
 
 include(GNUInstallDirs)

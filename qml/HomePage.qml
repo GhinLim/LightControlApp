@@ -3,6 +3,15 @@ import QtQuick.Controls
 
 Item {
     property var lightController
+    signal pushSettingPage()
+
+    function setDrawerOpen(isOpened){
+        if(isOpened)
+            drawer.open()
+        else
+            drawer.close()
+    }
+
     id:root
     Rectangle {
         id:background
@@ -14,18 +23,58 @@ Item {
         }
     }
 
-    Image {
+    Button {
         id: settingLogo
-        source: "../image/setting.png"
         width: 20
         height: 20
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.rightMargin: 30
         anchors.topMargin: 30
-        layer.enabled: true
-        layer.smooth: true
-        layer.samplerName: "linear"
+
+        background: Item {
+            id: imageContainer
+            width: parent.width
+            height: parent.height
+            scale: 1.0
+            opacity: 1.0
+
+            Image {
+                anchors.fill: parent
+                source: "../image/setting.png"
+                layer.enabled: true
+                layer.smooth: true
+                layer.samplerName: "linear"
+            }
+
+            states: [
+                State {
+                    name: "hovered"
+                    when: settingLogo.hovered && !settingLogo.pressed
+                    PropertyChanges { target: imageContainer; opacity: 0.7; scale: 1.2 }
+                },
+                State {
+                    name: "pressed"
+                    when: settingLogo.pressed
+                    PropertyChanges { target: imageContainer; opacity: 0.5; scale: 0.9 }
+                },
+                State {
+                    name: "normal"
+                    when: !settingLogo.hovered && !settingLogo.pressed
+                    PropertyChanges { target: imageContainer; opacity: 1.0; scale: 1.0 }
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "opacity, scale"; duration: 200 }
+                }
+            ]
+        }
+
+        onClicked:{
+            pushSettingPage()
+        }
     }
 
     Label{
@@ -133,11 +182,10 @@ Item {
         edge: Qt.BottomEdge
         interactive: false
         modal: false
-        width: /*controlPanel.width*/parent.width
+        width: parent.width
         height: controlPanel.height - 140
         dragMargin: height
         background: Rectangle{
-
             color: "#595973"
             Rectangle{
                 anchors.left: parent.left
@@ -156,8 +204,6 @@ Item {
                 anchors.topMargin: 15
                 color:"white"
             }
-
-
         }
 
         MouseArea {
@@ -165,7 +211,6 @@ Item {
             onClicked: {
                 controlPanel.clearTextFieldFocus()
             }
-
         }
 
         ControlPanel {
@@ -183,7 +228,6 @@ Item {
 
         Component.onCompleted: {
             open()
-
         }
     }
 }

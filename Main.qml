@@ -13,10 +13,29 @@ ApplicationWindow {
     Material.accent: Material.Indigo
     title: "Lighting Controller"
 
-    HomePage{
-        lightController: LightController
-        id:homePage
+    StackView{
+        id:stackView
         anchors.fill: parent
+        initialItem:     HomePage{
+            lightController: LightController
+            id:homePage
+            onPushSettingPage: stackView.push(settingPageCpnt)
+        }
+
+        onCurrentItemChanged: {
+            if(stackView.currentItem === homePage){
+                homePage.setDrawerOpen(true)
+            }else{
+                homePage.setDrawerOpen(false)
+            }
+        }
+
+        Component {
+            id:settingPageCpnt
+            SettingPage{
+                Component.onCompleted: back.connect(stackView.pop)
+            }
+        }
     }
 }
 

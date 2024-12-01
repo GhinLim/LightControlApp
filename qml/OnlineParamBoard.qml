@@ -34,5 +34,4 @@ Row {
         title:"UV Value"
         onParamTextChanged: onlineParam.uvValue = Number(text)
     }
-
 }

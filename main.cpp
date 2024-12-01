@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/LightControlApp/image/appLogo.png"));
 
-    qmlRegisterSingletonType<LightController>("LightController",1, 0, "LightController",LightController::instance);
+    qmlRegisterSingletonType<LightController>("LightController", 1, 0, "LightController",LightController::instance);
     qmlRegisterType         <ChannelSetter>  ("LightController", 1, 0, "ChannelSetter");
     qmlRegisterType         <PwmSetter>      ("LightController", 1, 0, "PwmSetter");
     qmlRegisterType         <OnlineParam>    ("LightController", 1, 0, "OnlineParam");
