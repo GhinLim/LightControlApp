@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 Item {
+    property var lightController
     signal back()
     Rectangle {
         id:background
@@ -12,8 +13,6 @@ Item {
             onClicked: background.forceActiveFocus()
         }
     }
-
-
 
     Button {
         id: backLogo
@@ -79,6 +78,7 @@ Item {
     }
 
     SettingBoard{
+        lightController: parent.lightController
         anchors.top: title.bottom
         anchors.topMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter

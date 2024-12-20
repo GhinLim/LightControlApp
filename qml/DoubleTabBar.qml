@@ -103,16 +103,8 @@ Item {
                 // 示例：这里可以设置 ChannelButton 的属性
                 neonText: "CH-" + (index<9?"0":"") + String(index+1)
                 onClicked: selectedIndex = index
+                onSwToggled: modelData.isOpened = swChecked
             }
-        }
-    }
-
-    Timer{
-        repeat: true
-        interval: 1000
-        running: true
-        onTriggered: {
-            channelBar1.itemAt(2).triggerNeonEffect("red")
         }
     }
 
@@ -131,9 +123,7 @@ Item {
             if(currentIndex === -1){
                 for(var i=0;i<contentChildren.length;i++){
                     var tabButton = itemAt(i);
-
                     tabButton.checked = false
-
                 }
             }
         }
@@ -160,6 +150,7 @@ Item {
                         return "CH-" + (index+root.model.length/2<9?"0":"") + String(index+1+root.model.length/2)
                     }
                 }
+                onSwToggled: modelData.isOpened = swChecked
             }
         }
 

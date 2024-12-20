@@ -6,8 +6,9 @@ Item {
     property alias model: combox.model
     property alias title: label.text
     property alias state: button.state
-    property alias currentIndex: combox.currentIndex
+    property alias currentText: combox.currentText
     signal btnClicked()
+    signal spread()
 
     width: 600
     height:80
@@ -33,6 +34,7 @@ Item {
                     ListElement { name: "COM 3" }
                 }
         anchors.verticalCenter: parent.verticalCenter
+        onPressedChanged: spread()
     }
 
     Button {
@@ -55,20 +57,17 @@ Item {
         }
 
         // 按钮文本
-        text: "Disconnected"
-
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
 
-        state: "connected"
         states: [
             State {
                 name: "connected"
-                PropertyChanges { target: button; text: "Connected"; iconColor: "#00ff66" }
+                PropertyChanges { target: button; text: "Disconnect"; iconColor: "#00ff66" }
             },
             State {
                 name: "disconnected"
-                PropertyChanges { target: button; text: "Disconnected"; iconColor: "#ff1919" }
+                PropertyChanges { target: button; text: "Connect"; iconColor: "#ff1919" }
             }
         ]
 

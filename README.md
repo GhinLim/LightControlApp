@@ -1,1 +1,2 @@
 光源控制APP
+Qt_6_7_2_MinGW_64_bit

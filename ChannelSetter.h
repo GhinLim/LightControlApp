@@ -15,7 +15,7 @@ class ChannelSetter : public QObject
     Q_PROPERTY(int totalBright READ totalBright WRITE setTotalBright NOTIFY totalBrightChanged FINAL)
     Q_PROPERTY(QQmlListProperty<PwmSetter> pwmSetterList READ pwmSetterList NOTIFY pwmSetterListChanged FINAL)
 public:
-    explicit ChannelSetter(QObject *parent = nullptr);
+    explicit ChannelSetter(int index, QObject *parent = nullptr);
     QQmlListProperty<PwmSetter> pwmSetterList();
     bool isOpened() const;
     void setIsOpened(bool newIsOpened);
@@ -40,6 +40,8 @@ signals:
 
     void totalBrightChanged();
 
+    void updateOtherChannels(int index,bool enabled);
+
 private:
     static void appendPwmSetter(QQmlListProperty<PwmSetter> *list, PwmSetter *pwmSetter);
     static qsizetype countPwmSetters(QQmlListProperty<PwmSetter>* list);
@@ -50,6 +52,7 @@ private:
     int m_colorTemp;
     int m_brightness;
     int m_totalBright;
+    int m_index;
 };
 
 #endif // CHANNELSETTER_H

@@ -45,6 +45,7 @@ qt_add_qml_module(appLightControlApp
         QML_FILES qml/ComSettingItem.qml
         QML_FILES qml/SettingBoard.qml
         QML_FILES qml/PwmHzSetting.qml
+        SOURCES Protocol.h Protocol.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

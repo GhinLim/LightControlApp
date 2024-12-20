@@ -33,6 +33,7 @@ ApplicationWindow {
         Component {
             id:settingPageCpnt
             SettingPage{
+                lightController: LightController
                 Component.onCompleted: back.connect(stackView.pop)
             }
         }

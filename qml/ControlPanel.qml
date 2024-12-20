@@ -75,8 +75,8 @@ Item{
         width: 56
         height: 38
         Material.background: Material.Indigo
-        layer.enabled: true
-        layer.smooth: true
+        // layer.enabled: true
+        // layer.smooth: true
         contentItem: Image {
             scale: 1.6
             anchors.centerIn: parent

@@ -2,7 +2,9 @@
 
 PwmSetter::PwmSetter(QObject *parent)
     : QObject{parent}
-{}
+{
+    m_enabled = true;
+}
 
 bool PwmSetter::isOpened() const
 {
@@ -28,4 +30,17 @@ void PwmSetter::setValue(int newValue)
         return;
     m_value = newValue;
     emit valueChanged();
+}
+
+bool PwmSetter::enabled() const
+{
+    return m_enabled;
+}
+
+void PwmSetter::setEnabled(bool newEnabled)
+{
+    if (m_enabled == newEnabled)
+        return;
+    m_enabled = newEnabled;
+    emit enabledChanged();
 }

@@ -1,13 +1,14 @@
 #include "ChannelSetter.h"
 
-ChannelSetter::ChannelSetter(QObject *parent)
-    : QObject{parent}
+ChannelSetter::ChannelSetter(int index, QObject *parent)
+    : QObject{parent},
+    m_index(index)
 {
     for(int i=0;i<12;i++)
     {
         PwmSetter* pwmSetter = new PwmSetter(this);
         pwmSetter->setValue((i+1)*1000);
-        pwmSetter->setIsOpened(i%2);
+        // pwmSetter->setIsOpened(i%2);
         m_pwmSetterList.append(pwmSetter);
     }
 }
@@ -75,6 +76,7 @@ void ChannelSetter::setIsOpened(bool newIsOpened)
         return;
     m_isOpened = newIsOpened;
     emit isOpenedChanged();
+    emit updateOtherChannels(m_index,!m_isOpened);
 }
 
 int ChannelSetter::colorTemp() const

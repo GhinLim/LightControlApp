@@ -1,4 +1,8 @@
 #include "LightController.h"
+#include "OnlineParam.h"
+#include "SerialCom.h"
+#include "Protocol.h"
+#include "ChannelSetter.h"
 
 QObject *LightController::instance(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -20,11 +24,36 @@ LightController::LightController(QObject *parent)
 
     for(int i=0;i<12;i++)
     {
-        ChannelSetter *channelSetter = new ChannelSetter(this);
+        ChannelSetter *channelSetter = new ChannelSetter(i,this);
+        connect(channelSetter,&ChannelSetter::updateOtherChannels,this,[=](int index,bool enabled){
+            qDebug()<<"来自channel["<<index<<"]:"<<enabled;
+            ChannelSetter * channelSetter = m_channelSetterList[index]; //取得开关发生改变的channelSetter
+            for(int i=0;i<12;i++)   //修改剩余的channnelSetter
+            {
+                if(i == index){
+                    continue;
+                }
+                ChannelSetter* updatingChannelSetter = m_channelSetterList[i];  //取得需要修改的ChannelSetter
+
+                for(int j= 0;j<12;j++)  //遍历ChannelSetter的pwmSetterList
+                {
+                    if(channelSetter->pwmSetterList().toList<QList<PwmSetter*>>().at(j)->isOpened()&&channelSetter->pwmSetterList().toList<QList<PwmSetter*>>().at(j)->enabled()){
+                        updatingChannelSetter->pwmSetterList().toList<QList<PwmSetter*>>().at(j)->setEnabled(enabled);
+                    }
+
+                }
+            }
+        });
         channelSetter->setTotalBright((i+1)*1000);
         m_channelSetterList.append(channelSetter);
-
     }
+
+    m_pcOnlineCom = new SerialCom(this);
+    m_a200OnlineCom = new SerialCom(this);
+
+    m_protocol = new Protocol(this);
+
+    m_protocol->init();
 }
 
 LightController::~LightController()
@@ -86,4 +115,14 @@ void LightController::clearChannelSetters(QQmlListProperty<ChannelSetter> *list)
 OnlineParam* LightController::onlineParam() const
 {
     return m_onlineParam;
+}
+
+SerialCom *LightController::pcOnlineCom() const
+{
+    return m_pcOnlineCom;
+}
+
+SerialCom *LightController::a200OnlineCom() const
+{
+    return m_a200OnlineCom;
 }

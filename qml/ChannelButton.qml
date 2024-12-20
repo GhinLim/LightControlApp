@@ -9,7 +9,7 @@ TabButton {
     property alias textNormalColor: neonText.normalColor
     property alias textNeonColor: neonText.neonColor
     property alias isTextNeonEffect: neonText.isNeonEffect
-    signal swToggled(bool checked)
+    signal swToggled(bool swChecked)
 
     function triggerNeonEffect(color)
     {
@@ -57,7 +57,7 @@ TabButton {
                 // } else {
                 //     console.log("Switch is turned OFF");
                 // }
-                swToggled(checked)
+                swToggled(sw.checked)
             }
         }
 
