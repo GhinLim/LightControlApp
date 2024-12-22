@@ -1,14 +1,23 @@
 #include "ChannelSetter.h"
+#include "Tools.hpp"
 
 ChannelSetter::ChannelSetter(int index, QObject *parent)
     : QObject{parent},
     m_index(index)
 {
+    isOpenedKey += QString::number(index);
+    colorTempKey += QString::number(index);
+    brightnessKey += QString::number(index);
+    totalBrightKey += QString::number(index);
+
+    restoreInput(m_isOpened,isOpenedKey);
+    restoreInput(m_colorTemp,colorTempKey);
+    restoreInput(m_brightness,brightnessKey);
+    restoreInput(m_totalBright,totalBrightKey);
+
     for(int i=0;i<12;i++)
     {
-        PwmSetter* pwmSetter = new PwmSetter(this);
-        pwmSetter->setValue((i+1)*1000);
-        // pwmSetter->setIsOpened(i%2);
+        PwmSetter* pwmSetter = new PwmSetter(m_index,i,this);
         m_pwmSetterList.append(pwmSetter);
     }
 }
@@ -75,6 +84,7 @@ void ChannelSetter::setIsOpened(bool newIsOpened)
     if (m_isOpened == newIsOpened)
         return;
     m_isOpened = newIsOpened;
+    saveInput(m_isOpened,isOpenedKey);
     emit isOpenedChanged();
     emit updateOtherChannels(m_index,!m_isOpened);
 }
@@ -89,6 +99,7 @@ void ChannelSetter::setColorTemp(int newColorTemp)
     if (m_colorTemp == newColorTemp)
         return;
     m_colorTemp = newColorTemp;
+    saveInput(m_colorTemp,colorTempKey);
     emit colorTempChanged();
 }
 
@@ -102,6 +113,7 @@ void ChannelSetter::setBrightness(int newBrightness)
     if (m_brightness == newBrightness)
         return;
     m_brightness = newBrightness;
+    saveInput(m_brightness,brightnessKey);
     emit brightnessChanged();
 }
 
@@ -115,5 +127,6 @@ void ChannelSetter::setTotalBright(int newTotalBright)
     if (m_totalBright == newTotalBright)
         return;
     m_totalBright = newTotalBright;
+    saveInput(m_totalBright,totalBrightKey);
     emit totalBrightChanged();
 }

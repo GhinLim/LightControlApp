@@ -2,6 +2,7 @@
 #define PWMSETTER_H
 
 #include <QObject>
+#include <QString>
 
 class PwmSetter : public QObject
 {
@@ -10,7 +11,7 @@ class PwmSetter : public QObject
     Q_PROPERTY(bool isOpened READ isOpened WRITE setIsOpened NOTIFY isOpenedChanged FINAL)
     Q_PROPERTY(int value READ value WRITE setValue NOTIFY valueChanged FINAL)
 public:
-    explicit PwmSetter(QObject *parent = nullptr);
+    explicit PwmSetter(int channelIndex, int index, QObject *parent = nullptr);
 
     bool isOpened() const;
     void setIsOpened(bool newIsOpened);
@@ -25,11 +26,17 @@ signals:
     void isOpenedChanged();
     void valueChanged();
     void enabledChanged();
+    void updatePwmOfOtherChannels(int channelIndex, int index, bool enabled);
 
 private:
-    bool m_isOpened;
-    int m_value;
-    bool m_enabled;
+    bool m_isOpened = false;
+    int m_value = 0;
+    bool m_enabled = true;
+    int m_channelIndex;
+    int m_index;
+    QString isOpenedKey = "PwmSetter_isOpened_";
+    QString valueKey = "PwmSetter_value_";
+    QString enabledKey = "PwmSetter_enabled_";
 };
 
 #endif // PWMSETTER_H

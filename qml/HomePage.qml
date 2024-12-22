@@ -12,6 +12,10 @@ Item {
             drawer.close()
     }
 
+    function refreshData(){
+        controlPanel.refreshData()
+    }
+
     id:root
     Rectangle {
         id:background

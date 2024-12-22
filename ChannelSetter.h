@@ -48,11 +48,16 @@ private:
     static PwmSetter *atPwmSetter(QQmlListProperty<PwmSetter> *list ,qsizetype index);
     static void clearPwmSetters(QQmlListProperty<PwmSetter> *list);
     QList<PwmSetter*> m_pwmSetterList;
-    bool m_isOpened;
-    int m_colorTemp;
-    int m_brightness;
-    int m_totalBright;
+    bool m_isOpened = false;
+    int m_colorTemp = 0;
+    int m_brightness = 0;
+    int m_totalBright = 0;
     int m_index;
+
+    QString isOpenedKey = "channel_isOpened_";
+    QString colorTempKey = "channel_colorTemp_";
+    QString brightnessKey = "channel_brightness_";
+    QString totalBrightKey = "channel_totalBright_";
 };
 
 #endif // CHANNELSETTER_H

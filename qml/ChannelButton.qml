@@ -51,7 +51,7 @@ TabButton {
             anchors.right: neonText.left
             anchors.rightMargin: -25
             onToggled: {
-                tabBtn.clicked()
+                // tabBtn.clicked()
                 // if (checked) {
                 //     console.log("Switch is turned ON");
                 // } else {

@@ -13,6 +13,12 @@ Item{
         swipeView.currentItem.clearTextFieldFocus()
     }
 
+    function refreshData(){
+        for (var i = 0; i < repeater.count; i++) {
+            repeater.itemAt(i).refreshData()
+        }
+    }
+
     onFocusChanged: {
         if(!focus){
             console.log("controlPanel.focus = false")
@@ -42,6 +48,7 @@ Item{
         }
 
         Repeater{
+            id: repeater
             model:channelSetterList
             ParamBoard{
                 channelSetter: modelData

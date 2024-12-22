@@ -13,6 +13,7 @@ Rectangle{
     Column{
         anchors.horizontalCenter: parent.horizontalCenter
         ComSettingItem{
+            id:pcOnlineComSetting
             model: lightController.pcOnlineCom.portNameList
             title: qsTr("PC-Online")
             onCurrentTextChanged: lightController.pcOnlineCom.currentPortName = currentText
@@ -38,14 +39,15 @@ Rectangle{
                 function onIsOpenedChanged(){
                     console.log("recv isOpenedChanged!")
                     if(lightController.pcOnlineCom.isOpened)
-                        state = "connected"
+                        pcOnlineComSetting.state = "connected"
                     else
-                        state = "disconnected"
+                        pcOnlineComSetting.state = "disconnected"
                 }
             }
         }
 
         ComSettingItem{
+            id:a200OnlineComSetting
             model: lightController.a200OnlineCom.portNameList
             title: qsTr("200A-Online")
             onCurrentTextChanged: lightController.a200OnlineCom.currentPortName = currentText
@@ -71,9 +73,9 @@ Rectangle{
                 function onIsOpenedChanged(){
                     console.log("recv isOpenedChanged!")
                     if(lightController.a200OnlineCom.isOpened)
-                        state = "connected"
+                        a200OnlineComSetting.state = "connected"
                     else
-                        state = "disconnected"
+                        a200OnlineComSetting.state = "disconnected"
                 }
             }
         }

@@ -16,11 +16,6 @@ LightController::LightController(QObject *parent)
     : QObject{parent}
 {
     m_onlineParam = new OnlineParam(this);
-    m_onlineParam->setColorTemp(1000);
-    m_onlineParam->setBrightness(2000);
-    m_onlineParam->setXColorCoord(3000);
-    m_onlineParam->setYColorCoord(4000);
-    m_onlineParam->setUvValue(5000);
 
     for(int i=0;i<12;i++)
     {
@@ -44,8 +39,23 @@ LightController::LightController(QObject *parent)
                 }
             }
         });
-        channelSetter->setTotalBright((i+1)*1000);
         m_channelSetterList.append(channelSetter);
+
+        for(int j=0;j<12;j++)
+        {
+            PwmSetter* pwmSetter = channelSetter->pwmSetterList().toList<QList<PwmSetter*>>().at(j);
+            connect(pwmSetter,&PwmSetter::updatePwmOfOtherChannels,this,[=](int channelIndex,int index,bool enabled){
+                for(int i=0;i<12;i++)
+                {
+                    if(i == channelIndex){
+                        continue;
+                    }
+                    ChannelSetter* updatingChannelSetter = m_channelSetterList[i];  //取得需要修改的ChannelSetter
+                    updatingChannelSetter->pwmSetterList().toList<QList<PwmSetter*>>().at(index)->setEnabled(enabled);
+                    qDebug()<<"channel:"<<i<<" Pwm:"<<index<<" is set to "<<enabled;
+                }
+            });
+        }
     }
 
     m_pcOnlineCom = new SerialCom(this);

@@ -13,7 +13,15 @@ ApplicationWindow {
     Material.accent: Material.Indigo
     title: "Lighting Controller"
 
+    Component.onCompleted: {
+        stackView.refreshData()
+    }
+
     StackView{
+        function refreshData(){
+            homePage.refreshData()
+        }
+
         id:stackView
         anchors.fill: parent
         initialItem:     HomePage{

@@ -6,6 +6,7 @@
 #include "ChannelSetter.h"
 #include "PwmSetter.h"
 #include "OnlineParam.h"
+#include "Tools.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +16,10 @@ int main(int argc, char *argv[])
     QSurfaceFormat::setDefaultFormat(format);
 
     QGuiApplication app(argc, argv);
+    configureLogging(false);
+    clearInput();
     app.setWindowIcon(QIcon(":/LightControlApp/image/appLogo.png"));
+    qDebug()<<"GGWP";
 
     qmlRegisterSingletonType<LightController>("LightController", 1, 0, "LightController",LightController::instance);
     qmlRegisterType         <ChannelSetter>  ("LightController", 1, 0, "ChannelSetter");

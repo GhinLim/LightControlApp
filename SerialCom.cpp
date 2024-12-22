@@ -21,16 +21,16 @@ SerialCom::SerialCom(QObject *parent)
 
 void SerialCom::openSerialPort()
 {
-    qDebug()<<"try to open";
+    qInfo()<<"try to open";
     m_serial->setPortName(m_currentPortName);
     m_serial->setBaudRate(m_baudRate);
 
     if (m_serial->open(QIODevice::ReadWrite)) {
-        qDebug()<<"open succeed!";
+        qInfo()<<"open succeed!";
         setIsOpened(true);
     } else {
         setIsOpened(false);
-        qDebug()<<m_serial->errorString();
+        qInfo()<<m_serial->errorString();
     }
 }
 

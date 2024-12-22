@@ -14,6 +14,10 @@ Item {
 
     onValueChanged: param.text = String(value)
 
+    function refreshData(){
+        param.text = value
+    }
+
     MouseArea{
         anchors.fill: parent
         onClicked: parent.forceActiveFocus()
@@ -35,10 +39,10 @@ Item {
             anchors.topMargin: 20
         }
 
-        RoundButton{
+        RoundButton {
             visible: hasCtrlBtn
-            id:minusBtn
-            x:5
+            id: minusBtn
+            x: 5
             width: 50
             height: 50
             text: "-"
@@ -47,31 +51,110 @@ Item {
             anchors.verticalCenter: param.verticalCenter
             Material.background: Material.Indigo
             Material.foreground: "white"
-            onClicked: {
-                var num = Number(param.text)
-                num--
-                param.text = String(num)
+
+            // 定义一个 Timer 用来持续减少数字
+            Timer {
+                id: minusTimer
+                interval: 100 // 每100毫秒触发一次
+                running: false // 初始时 Timer 不运行
+                repeat: true // 设置为重复模式
+                onTriggered: {
+                    var num = textField.visible?Number(textField.text):Number(param.text)
+                    if (num > 0) {
+                        num--
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                           param.text = String(num)
+                        }
+                    }
+                }
+            }
+
+            MouseArea {
+                id: minusMouseArea
+                anchors.fill: parent
+                onPressed: {
+                    minusTimer.start() // 按下时启动计时器
+                }
+                onReleased: {
+                    minusTimer.stop() // 松开时停止计时器
+                }
+                onCanceled: {
+                    minusTimer.stop() // 如果按下的鼠标被取消，停止计时器
+                }
+                onClicked: {
+                    var num = textField.visible?Number(textField.text):Number(param.text)
+                    if (num > 0) {
+                        num--
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                           param.text = String(num)
+                        }
+                    }
+                }
             }
         }
 
-        RoundButton{
+        RoundButton {
             visible: hasCtrlBtn
-            id:addBtn
+            id: addBtn
             width: 50
             height: 50
-            x:205
+            x: 205
             text: "+"
             font.pixelSize: 30
             font.bold: true
             anchors.verticalCenter: param.verticalCenter
             Material.background: Material.Indigo
             Material.foreground: "white"
-            onClicked: {
-                var num = Number(param.text)
-                num++
-                param.text = String(num)
+
+            // 定义一个 Timer 用来持续增加数字
+            Timer {
+                id: addTimer
+                interval: 100 // 每100毫秒触发一次
+                running: false // 初始时 Timer 不运行
+                repeat: true // 设置为重复模式
+                onTriggered: {
+                    var num = textField.visible?Number(textField.text):Number(param.text)
+                    if (num < 9999) {
+                        num++
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                           param.text = String(num)
+                        }
+                    }
+                }
+            }
+
+            MouseArea {
+                id: addMouseArea
+                anchors.fill: parent
+                onPressed: {
+                    addTimer.start() // 按下时启动计时器
+                }
+                onReleased: {
+                    addTimer.stop() // 松开时停止计时器
+                }
+                onCanceled: {
+                    addTimer.stop() // 如果按下的鼠标被取消，停止计时器
+                }
+                onClicked: {
+                    var num = textField.visible?Number(textField.text):Number(param.text)
+                    if (num < 9999) {
+                        num++
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                            param.text = String(num)
+                        }
+                    }
+                }
             }
         }
+
 
         NeonText{
             id:param
@@ -109,8 +192,25 @@ Item {
             onFocusChanged: {
                 if (!focus) {
                     param.visible = true
-                    param.text = textField.text
                     textField.visible = false
+                }
+            }
+
+            validator: IntValidator {
+                bottom: 0
+                top: 9999
+            }
+
+            onTextChanged: {
+                // 移除前导零
+                if (text.startsWith("00")) {
+                    text = "0";
+                }
+                if (text.startsWith("0") && text.length > 1) {
+                    text = text.replace(/^0+/, "");
+                }
+                if(text!==""){
+                    param.text = textField.text
                 }
             }
         }

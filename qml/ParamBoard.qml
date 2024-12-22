@@ -16,6 +16,7 @@ Item{
 
     function refreshData()
     {
+        channelParamBoard.refreshData()
         for (var i = 0; i < repeater.count; i++) {
             repeater.itemAt(i).refreshData()
         }

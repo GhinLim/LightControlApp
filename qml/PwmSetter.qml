@@ -80,10 +80,10 @@ Item {
             onClicked:  innerModelData.value = Number(pwmValue.text)
         }
 
-        RoundButton{
-            id:minusBtn
+        RoundButton {
+            id: minusBtn
             enabled: root.enabled
-            x:112
+            x: 112
             width: 50
             height: 50
             text: "-"
@@ -92,31 +92,110 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             Material.background: Material.Indigo
             Material.foreground: "white"
-            onClicked: {
-                var num = Number(pwmValue.text)
-                num--
-                pwmValue.text = String(num)
+
+            // 定义一个 Timer 用来持续减少数字
+            Timer {
+                id: minusTimer
+                interval: 100 // 每100毫秒触发一次
+                running: false // 初始时 Timer 不运行
+                repeat: true // 设置为重复模式
+                onTriggered: {
+                    var num = textField.visible?Number(textField.text):Number(pwmValue.text)
+                    if (num > 0) {
+                        num--
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                           pwmValue.text = String(num)
+                        }
+                    }
+                }
+            }
+
+            MouseArea {
+                id: minusMouseArea
+                anchors.fill: parent
+                onPressed: {
+                    minusTimer.start() // 按下时启动计时器
+                }
+                onReleased: {
+                    minusTimer.stop() // 松开时停止计时器
+                }
+                onCanceled: {
+                    minusTimer.stop() // 如果按下的鼠标被取消，停止计时器
+                }
+                onClicked: {
+                    var num = textField.visible?Number(textField.text):Number(pwmValue.text)
+                    if (num > 0) {
+                        num--
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                           pwmValue.text = String(num)
+                        }
+                    }
+                }
             }
         }
 
-        RoundButton{
-            id:addBtn
+        RoundButton {
+            id: addBtn
             enabled: root.enabled
             width: 50
             height: 50
-            x:338
+            x: 338
             text: "+"
             font.pixelSize: 30
             font.bold: true
             anchors.verticalCenter: parent.verticalCenter
             Material.background: Material.Indigo
             Material.foreground: "white"
-            onClicked: {
-                var num = Number(pwmValue.text)
-                num++
-                pwmValue.text = String(num)
+
+            // 定义一个 Timer 用来持续增加数字
+            Timer {
+                id: addTimer
+                interval: 100 // 每100毫秒触发一次
+                running: false // 初始时 Timer 不运行
+                repeat: true // 设置为重复模式
+                onTriggered: {
+                    var num = textField.visible?Number(textField.text):Number(pwmValue.text)
+                    if (num < 9999) {
+                        num++
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                           pwmValue.text = String(num)
+                        }
+                    }
+                }
+            }
+
+            MouseArea {
+                id: addMouseArea
+                anchors.fill: parent
+                onPressed: {
+                    addTimer.start() // 按下时启动计时器
+                }
+                onReleased: {
+                    addTimer.stop() // 松开时停止计时器
+                }
+                onCanceled: {
+                    addTimer.stop() // 如果按下的鼠标被取消，停止计时器
+                }
+                onClicked: {
+                    var num = textField.visible?Number(textField.text):Number(pwmValue.text)
+                    if (num < 9999) {
+                        num++
+                        if(textField.visible){
+                            textField.text = num
+                        }else{
+                            pwmValue.text = String(num)
+                        }
+                    }
+                }
             }
         }
+
 
         TextField {
             id: textField
@@ -129,8 +208,23 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             enabled: root.enabled
+
+            validator: IntValidator {
+                bottom: 0
+                top: 9999
+            }
+
             onTextChanged: {
-                pwmValue.text = textField.text
+                // 移除前导零
+                if (text.startsWith("00")) {
+                    text = "0";
+                }
+                if (text.startsWith("0") && text.length > 1) {
+                    text = text.replace(/^0+/, "");
+                }
+                if(text!==""){
+                    pwmValue.text = textField.text
+                }
             }
 
             // 当 TextField 失去焦点时隐藏它
