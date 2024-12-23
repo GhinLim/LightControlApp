@@ -52,7 +52,7 @@ LightController::LightController(QObject *parent)
                     }
                     ChannelSetter* updatingChannelSetter = m_channelSetterList[i];  //取得需要修改的ChannelSetter
                     updatingChannelSetter->pwmSetterList().toList<QList<PwmSetter*>>().at(index)->setEnabled(enabled);
-                    qDebug()<<"channel:"<<i<<" Pwm:"<<index<<" is set to "<<enabled;
+                    // qDebug()<<"channel:"<<i<<" Pwm:"<<index<<" is set to "<<enabled;
                 }
             });
         }

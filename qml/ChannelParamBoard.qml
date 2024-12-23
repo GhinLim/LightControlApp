@@ -65,19 +65,12 @@ Row {
             isTotalBrightEqual = true
         }
 
-        property int previousValue: 0  // 用来存储上一个值
         id:totalBrightCPS
         title: "Total Brightness"
         source: "../image/totalBrightness.png"
         value: channelParameters.totalBright
         hasCtrlBtn: true
         onParamTextChanged:{
-            var newValue = parseInt(text)  // 获取新的文本值
-            if (previousValue !== 0) {  // 确保以前的值已存在
-                var multiplier = newValue / previousValue  // 计算倍率
-                multiplierChanged(multiplier)  // 发出倍率信号
-            }
-
             if(channelParameters.totalBright === Number(text)){
                 isTotalBrightEqual = true
             }else{
@@ -85,6 +78,10 @@ Row {
             }
             checkDataEquality()
             setterText = text
+        }
+
+        onMultiplierChanged:{
+            root.multiplierChanged(multiplier)
         }
     }
     ChannelParamSetter{

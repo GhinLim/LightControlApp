@@ -12,6 +12,14 @@ Item {
     property var firstTabBarModel
     property var secondTabBarModel
 
+    function glitterChannelText(channelIndex){
+        if(channelIndex<model.length/2){
+            channelBar1.itemAt(channelIndex).triggerNeonEffect("red")
+        }else{
+            channelBar2.itemAt(channelIndex-model.length/2).triggerNeonEffect("red")
+        }
+    }
+
     function splitModel(){
         if (typeof model === "number") {
             console.log("model is number!")
@@ -103,8 +111,8 @@ Item {
                 // 示例：这里可以设置 ChannelButton 的属性
                 neonText: "CH-" + (index<9?"0":"") + String(index+1)
                 onClicked: selectedIndex = index
-                swChecked: modelData.isOpened
-
+                onSwCheckedChanged: modelData.isOpened = swChecked
+                Component.onCompleted: swChecked = modelData.isOpened
             }
         }
     }
@@ -151,7 +159,8 @@ Item {
                         return "CH-" + (index+root.model.length/2<9?"0":"") + String(index+1+root.model.length/2)
                     }
                 }
-                swChecked: modelData.isOpened
+                onSwCheckedChanged: modelData.isOpened = swChecked
+                Component.onCompleted: swChecked = modelData.isOpened
             }
         }
 

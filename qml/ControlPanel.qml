@@ -8,7 +8,7 @@ Item{
     width: childrenRect.width
     height: childrenRect.height
     property var channelSetterList:LightController.channelSetterList
-
+    signal channelFound(int channelIndex)
     function clearTextFieldFocus(){
         swipeView.currentItem.clearTextFieldFocus()
     }
@@ -57,6 +57,18 @@ Item{
                     // if (currentItem === parent) {  // 确保只有当前显示的 ParamBoard 会改变 saveBtn 的状态
                         saveBtn.enabled = !isEqual
                     // }
+                }
+                onInquireOccupation: {
+                    for (var i = 0; i < repeater.count; i++) {
+                        if(i===index){
+                            continue
+                        }
+
+                        if(repeater.itemAt(i).isPwmSetterOpened(pwmSetterIndex)!== -1){
+                            doubleTabBar.glitterChannelText(i)
+                            break
+                        }
+                    }
                 }
             }
         }

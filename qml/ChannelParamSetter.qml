@@ -9,6 +9,7 @@ Item {
     property alias title: title.text
     property bool hasCtrlBtn:false
     signal paramTextChanged(string text)
+    signal multiplierChanged(real multiplier)
     width: 260
     height: 160
 
@@ -65,7 +66,11 @@ Item {
                         if(textField.visible){
                             textField.text = num
                         }else{
-                           param.text = String(num)
+                            var multiplier = num / value
+                            if (multiplier !== Infinity && !isNaN(multiplier)){
+                                multiplierChanged(multiplier)
+                            }
+                            param.text = String(num)
                         }
                     }
                 }
@@ -90,7 +95,11 @@ Item {
                         if(textField.visible){
                             textField.text = num
                         }else{
-                           param.text = String(num)
+                            var multiplier = num / value
+                            if (multiplier !== Infinity && !isNaN(multiplier)){
+                                multiplierChanged(multiplier)
+                            }
+                            param.text = String(num)
                         }
                     }
                 }
@@ -123,7 +132,11 @@ Item {
                         if(textField.visible){
                             textField.text = num
                         }else{
-                           param.text = String(num)
+                            var multiplier = num / value
+                            if (multiplier !== Infinity && !isNaN(multiplier)){
+                                multiplierChanged(multiplier)
+                            }
+                            param.text = String(num)
                         }
                     }
                 }
@@ -148,6 +161,10 @@ Item {
                         if(textField.visible){
                             textField.text = num
                         }else{
+                            var multiplier = num / value
+                            if (multiplier !== Infinity && !isNaN(multiplier)){
+                                multiplierChanged(multiplier)
+                            }
                             param.text = String(num)
                         }
                     }
@@ -211,6 +228,24 @@ Item {
                 }
                 if(text!==""){
                     param.text = textField.text
+                }
+
+                var newValue = Number(text)
+                var multiplier = newValue / value
+                if (multiplier !== Infinity && !isNaN(multiplier)){
+                    multiplierChanged(multiplier)
+                }
+                console.log("value=",value,"newValue=",newValue,"multiplier:",multiplier)
+            }
+
+            onVisibleChanged: {
+                if(!visible){
+                    var newValue = Number(param.text)
+                    var multiplier = newValue / value
+                    if (multiplier !== Infinity && !isNaN(multiplier)){
+                        multiplierChanged(multiplier)
+                    }
+                    console.log("value=",value,"newValue=",newValue,"multiplier:",multiplier)
                 }
             }
         }

@@ -113,7 +113,7 @@ Item {
             target: drawer
             function onOpenedChanged() {
                 if (drawer.opened) {
-                    console.log("drawer is opened!");
+                    // console.log("drawer is opened!");
                     // 清除所有 anchors 设置，避免冲突
                     onlineParamBoard.anchors.centerIn = undefined;
 
@@ -121,7 +121,7 @@ Item {
                     onlineParamBoard.anchors.top = root.top;
                     onlineParamBoard.anchors.topMargin = 100;
                 } else {
-                    console.log("drawer is closed!");
+                    // console.log("drawer is closed!");
                     // 清除所有 anchors 设置
                     onlineParamBoard.anchors.top = undefined;
                     onlineParamBoard.anchors.topMargin = undefined;

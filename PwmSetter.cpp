@@ -33,6 +33,8 @@ void PwmSetter::setIsOpened(bool newIsOpened)
     {
         emit updatePwmOfOtherChannels(m_channelIndex,m_index,!m_isOpened);
     }
+
+    emit maxDetect();
 }
 
 int PwmSetter::value() const
@@ -47,6 +49,10 @@ void PwmSetter::setValue(int newValue)
     m_value = newValue;
     saveInput(m_value,valueKey);
     emit valueChanged();
+
+    if(m_enabled && m_isOpened){
+        emit maxDetect();
+    }
 }
 
 bool PwmSetter::enabled() const

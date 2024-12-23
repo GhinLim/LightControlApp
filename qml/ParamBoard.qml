@@ -8,14 +8,23 @@ Item{
     property bool isChannelParamEqual: true
     property bool isPwmParamEqual: true
     signal dataEqual(bool isEqual)
+    signal inquireOccupation(int pwmSetterIndex)
+
+    function isPwmSetterOpened(pwmSetterIndex){
+        if(repeater.itemAt(pwmSetterIndex).innerIsOpened && repeater.itemAt(pwmSetterIndex).enabled){
+            return index
+        }else{
+            return -1
+        }
+    }
 
     function checkDataEquality(){
         if(isChannelParamEqual && isPwmParamEqual){
             dataEqual(true)
-            console.log("总体：true")
+            // console.log("总体：true")
         }else{
             dataEqual(false)
-            console.log("总体：false")
+            // console.log("总体：false")
         }
     }
 
@@ -62,6 +71,7 @@ Item{
         function updatePwmsByMultiplier(multiplier){
             for (var i = 0; i < repeater.count; i++) {
                 if(repeater.itemAt(i).enabled && repeater.itemAt(i).innerIsOpened){
+                    // console.log("pwm[",i,"]recv Multiplier:",multiplier)
                     repeater.itemAt(i).setValueByMultiplier(multiplier)
                 }
             }
@@ -76,7 +86,7 @@ Item{
         function checkDataEquality(){
             for (var i = 0; i < repeater.count; i++) {
                 if(!repeater.itemAt(i).checkDataEquality()){
-                    console.log("PwmSetter:",i,"不相等")
+                    // console.log("PwmSetter:",i,"不相等")
                     isPwmParamEqual = false
                     root.checkDataEquality()
                     return
@@ -107,8 +117,11 @@ Item{
                 scale: 0.8
                 titleText: "W-"+String(index+1)
                 onRequestCheckDataEquality: {
-                    console.log("PwmSetter:",index,"requestCheckDataEquality")
+                    // console.log("PwmSetter:",index,"requestCheckDataEquality")
                     grid.checkDataEquality()
+                }
+                onInquireOccupation: {
+                    root.inquireOccupation(pwmSetterIndex)
                 }
             }
         }

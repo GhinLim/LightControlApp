@@ -13,13 +13,23 @@ Item {
     property alias textFieldFocus: textField.focus
     property alias pwmValue: pwmValue.text
     signal requestCheckDataEquality()
+    signal inquireOccupation(int pwmSetterIndex)
+    MouseArea{
+        anchors.fill: parent
+        visible: !root.enabled
+        onClicked: {
+            // console.log("unusable pwmSetter:",index)
+            inquireOccupation(index)
+        }
+        z:2
+    }
 
     function setValueByMultiplier(multiplier){
-        pwmValue = String((Number(pwmValue)*multiplier).toFixed(0))
+        pwmValue.text = String((innerValue*multiplier).toFixed(0))
     }
 
     function checkDataEquality(){
-        if(!enabled)
+        if(!root.enabled)
             return true
         else if(innerModelData.value === Number(pwmValue.text)){
             return true
@@ -45,7 +55,7 @@ Item {
     onInnerIsOpenedChanged: sw.checked = innerIsOpened
 
     onEnabledChanged: {
-        if(enabled)
+        if(root.enabled)
             sw.checked = innerIsOpened
         else
             sw.checked = false

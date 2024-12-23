@@ -36,9 +36,9 @@ TabButton {
 
     onCheckedChanged: {
         if (checked) {
-            neonText.normalColor = "black"
+            maskText.visible = true
         } else {
-            neonText.normalColor = "gray"
+            maskText.visible = false
         }
     }
 
@@ -52,12 +52,23 @@ TabButton {
             anchors.rightMargin: -25
         }
 
+
+
         NeonText{
             id:neonText
             text: "neonText"
             normalColor: "gray"
             font.pixelSize: 22
             anchors.centerIn: parent
+        }
+
+        Text{
+            id:maskText
+            text:neonText.text
+            font.pixelSize: 22
+            anchors.centerIn: parent
+            color: "black"
+            visible: false
         }
     }
 

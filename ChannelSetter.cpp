@@ -18,6 +18,19 @@ ChannelSetter::ChannelSetter(int index, QObject *parent)
     for(int i=0;i<12;i++)
     {
         PwmSetter* pwmSetter = new PwmSetter(m_index,i,this);
+        connect(pwmSetter,&PwmSetter::maxDetect,this,[this](){
+            int maxValue = 0;
+            for(int i=0;i<12;i++)
+            {
+                if(m_pwmSetterList.at(i)){
+                    if(m_pwmSetterList.at(i)->enabled() && m_pwmSetterList.at(i)->isOpened() && m_pwmSetterList.at(i)->value()>maxValue)
+                    {
+                        maxValue = m_pwmSetterList.at(i)->value();
+                    }
+                }
+            }
+            setTotalBright(maxValue);
+        });
         m_pwmSetterList.append(pwmSetter);
     }
 }
