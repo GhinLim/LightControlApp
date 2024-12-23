@@ -12,11 +12,30 @@ Item {
     property alias titleText: titleText.text
     property alias textFieldFocus: textField.focus
     property alias pwmValue: pwmValue.text
+    signal requestCheckDataEquality()
+
+    function setValueByMultiplier(multiplier){
+        pwmValue = String((Number(pwmValue)*multiplier).toFixed(0))
+    }
+
+    function checkDataEquality(){
+        if(!enabled)
+            return true
+        else if(innerModelData.value === Number(pwmValue.text)){
+            return true
+        }else{
+            return false
+        }
+    }
 
     function refreshData()
     {
         pwmValue.text = String(innerValue)
         sw.checked = innerIsOpened
+    }
+
+    function save(){
+        innerModelData.value = Number(pwmValue.text)
     }
 
     width: 500
@@ -77,7 +96,10 @@ Item {
                 anchors.centerIn: parent
                 source: "../image/save.png"
             }
-            onClicked:  innerModelData.value = Number(pwmValue.text)
+            onClicked: {
+                save()
+                requestCheckDataEquality()
+            }
         }
 
         RoundButton {
@@ -252,6 +274,7 @@ Item {
                     pwmValue.visible = false
                 }
             }
+            onTextChanged: requestCheckDataEquality()
         }
 
         Switch{

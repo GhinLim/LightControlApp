@@ -103,7 +103,8 @@ Item {
                 // 示例：这里可以设置 ChannelButton 的属性
                 neonText: "CH-" + (index<9?"0":"") + String(index+1)
                 onClicked: selectedIndex = index
-                onSwToggled: modelData.isOpened = swChecked
+                swChecked: modelData.isOpened
+
             }
         }
     }
@@ -150,7 +151,7 @@ Item {
                         return "CH-" + (index+root.model.length/2<9?"0":"") + String(index+1+root.model.length/2)
                     }
                 }
-                onSwToggled: modelData.isOpened = swChecked
+                swChecked: modelData.isOpened
             }
         }
 

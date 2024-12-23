@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
     configureLogging(false);
-    clearInput();
+    // clearInput();
     app.setWindowIcon(QIcon(":/LightControlApp/image/appLogo.png"));
     qDebug()<<"GGWP";
 

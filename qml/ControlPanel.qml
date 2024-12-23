@@ -34,32 +34,40 @@ Item{
     }
 
     SwipeView {
-        id:swipeView
+        id: swipeView
         clip: true
         width: 950
-        height: 780+80
+        height: 780 + 80
         anchors.top: doubleTabBar.bottom
         anchors.topMargin: 30
 
         onFocusChanged: {
-            if(!focus){
+            if (!focus) {
                 currentItem.clearTextFieldFocus()
             }
         }
 
-        Repeater{
+        Repeater {
             id: repeater
-            model:channelSetterList
-            ParamBoard{
+            model: channelSetterList
+            ParamBoard {
                 channelSetter: modelData
+                onDataEqual: {
+                    // 当前 ParamBoard 的 dataEqual 信号
+                    // if (currentItem === parent) {  // 确保只有当前显示的 ParamBoard 会改变 saveBtn 的状态
+                        saveBtn.enabled = !isEqual
+                    // }
+                }
             }
         }
 
         onCurrentIndexChanged: {
             currentItem.refreshData()
             doubleTabBar.selectedIndex = currentIndex
+            currentItem.checkDataEquality()
         }
     }
+
 
     Label{
         id:title1
@@ -91,6 +99,7 @@ Item{
             fillMode: Image.PreserveAspectFit
             smooth: true // 启用抗锯齿
         }
+        onClicked: swipeView.currentItem.save()
     }
 
     Label{
