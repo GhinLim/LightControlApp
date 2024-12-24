@@ -38,7 +38,7 @@ inline void logHandler(QtMsgType type, const QMessageLogContext &context, const 
     // 在程序启动时，只创建一次文件
     if (logFile == nullptr) {
         logFile = new QFile(logFileName);
-        if (!logFile->open(QIODevice::Append | QIODevice::Text)) {
+        if (!logFile->open(QIODevice::Append)) {  // 移除 QIODevice::Text 模式
             qDebug() << "Failed to open log file: " << logFile->errorString();  // 打印错误信息
             return;
         }
@@ -80,11 +80,17 @@ inline void logHandler(QtMsgType type, const QMessageLogContext &context, const 
     // 输出到日志文件
     out << logMessage << "\n";
 
+    // 强制刷新文件缓冲区
+    out.flush();     // 强制刷新 QTextStream 缓冲区
+    logFile->flush(); // 强制刷新 QFile 缓冲区
+
+    // 确保文件已更新，尝试关闭并重新打开文件
+    logFile->close();
+    logFile->open(QIODevice::Append);  // 重新以追加模式打开文件
+
     // 同时输出到控制台
-    // 确保只在正确的级别调用对应的日志函数
     switch (type) {
     case QtDebugMsg:
-        // 确保使用 qDebug() 输出绿色的调试信息
         qDebug() << logMessage;
         break;
     case QtInfoMsg:

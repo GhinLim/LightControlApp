@@ -79,6 +79,7 @@ void Protocol::init()
         }
 
         frameInfo += "[帧尾:0xFF]";
+        stream<<static_cast<qint8>(0xFF);
         m_pcOnlineCom->writeData(byteArray);
         qDebug()<<frameInfo;
         QStringList hexList;
