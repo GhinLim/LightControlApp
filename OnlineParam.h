@@ -41,11 +41,11 @@ signals:
     void uvValueChanged();
 
 private:
-    int m_colorTemp = 0;
-    int m_brightness = 0;
-    int m_xColorCoord = 0;
-    int m_yColorCoord = 0;
-    int m_uvValue = 0;
+    int m_colorTemp;
+    int m_brightness;
+    int m_xColorCoord;
+    int m_yColorCoord;
+    int m_uvValue;
 };
 
 #endif // ONLINEPARAM_H

@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     configureLogging(false);
     // clearInput();
     app.setWindowIcon(QIcon(":/LightControlApp/image/appLogo.png"));
-    qDebug()<<"GGWP";
+    qDebug()<<"GLHF";
 
     qmlRegisterSingletonType<LightController>("LightController", 1, 0, "LightController",LightController::instance);
     qmlRegisterType         <ChannelSetter>  ("LightController", 1, 0, "ChannelSetter");

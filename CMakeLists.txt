@@ -4,15 +4,17 @@ project(LightControlApp VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# 设置资源文件路径
+ set(ICON_RESOURCE "${CMAKE_CURRENT_SOURCE_DIR}/app_icon.rc")
 
 find_package(Qt6 6.2 REQUIRED COMPONENTS Quick SerialPort)
 
 
-qt_add_executable(appLightControlApp
+qt_add_executable(LightControlApp WIN32 ${ICON_RESOURCE}
     main.cpp
 )
 
-qt_add_qml_module(appLightControlApp
+qt_add_qml_module(LightControlApp
     URI LightControlApp
     VERSION 1.0
     QML_FILES
@@ -52,20 +54,20 @@ qt_add_qml_module(appLightControlApp
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
-set_target_properties(appLightControlApp PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appLightControlApp
+set_target_properties(LightControlApp PROPERTIES
+#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.LightControlApp
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(appLightControlApp
+target_link_libraries(LightControlApp
     PRIVATE Qt6::Quick Qt6::SerialPort
 )
 
 include(GNUInstallDirs)
-install(TARGETS appLightControlApp
+install(TARGETS LightControlApp
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

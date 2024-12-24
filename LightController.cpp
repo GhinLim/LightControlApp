@@ -3,6 +3,7 @@
 #include "SerialCom.h"
 #include "Protocol.h"
 #include "ChannelSetter.h"
+#include "Tools.hpp"
 
 QObject *LightController::instance(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -15,13 +16,19 @@ QObject *LightController::instance(QQmlEngine *engine, QJSEngine *scriptEngine)
 LightController::LightController(QObject *parent)
     : QObject{parent}
 {
+    restoreInput(m_pwmHz,pwmHzKey);
     m_onlineParam = new OnlineParam(this);
+    m_onlineParam->setBrightness(0);
+    m_onlineParam->setColorTemp(0);
+    m_onlineParam->setXColorCoord(0);
+    m_onlineParam->setYColorCoord(0);
+    m_onlineParam->setUvValue(0);
 
     for(int i=0;i<12;i++)
     {
         ChannelSetter *channelSetter = new ChannelSetter(i,this);
         connect(channelSetter,&ChannelSetter::updateOtherChannels,this,[=](int index,bool enabled){
-            qDebug()<<"来自channel["<<index<<"]:"<<enabled;
+            // qDebug()<<"来自channel["<<index<<"]:"<<enabled;
             ChannelSetter * channelSetter = m_channelSetterList[index]; //取得开关发生改变的channelSetter
             for(int i=0;i<12;i++)   //修改剩余的channnelSetter
             {
@@ -58,8 +65,8 @@ LightController::LightController(QObject *parent)
         }
     }
 
-    m_pcOnlineCom = new SerialCom(this);
-    m_a200OnlineCom = new SerialCom(this);
+    m_pcOnlineCom = new SerialCom("pcOnlineCom",this);
+    m_a200OnlineCom = new SerialCom("200AOnlineCom",this);
 
     m_protocol = new Protocol(this);
 
@@ -135,4 +142,19 @@ SerialCom *LightController::pcOnlineCom() const
 SerialCom *LightController::a200OnlineCom() const
 {
     return m_a200OnlineCom;
+}
+
+int LightController::pwmHz() const
+{
+    return m_pwmHz;
+}
+
+void LightController::setPwmHz(int newPwmHz)
+{
+    if (m_pwmHz == newPwmHz)
+        return;
+    m_pwmHz = newPwmHz;
+    saveInput(m_pwmHz,pwmHzKey);
+    qDebug()<<"'pwmHz' is set:"<<m_pwmHz;
+    emit pwmHzChanged();
 }

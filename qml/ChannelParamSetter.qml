@@ -235,7 +235,7 @@ Item {
                 if (multiplier !== Infinity && !isNaN(multiplier)){
                     multiplierChanged(multiplier)
                 }
-                console.log("value=",value,"newValue=",newValue,"multiplier:",multiplier)
+                // console.log("value=",value,"newValue=",newValue,"multiplier:",multiplier)
             }
 
             onVisibleChanged: {
@@ -245,7 +245,7 @@ Item {
                     if (multiplier !== Infinity && !isNaN(multiplier)){
                         multiplierChanged(multiplier)
                     }
-                    console.log("value=",value,"newValue=",newValue,"multiplier:",multiplier)
+                    // console.log("value=",value,"newValue=",newValue,"multiplier:",multiplier)
                 }
             }
         }
@@ -259,8 +259,6 @@ Item {
             normalColor: "black"
         }
     }
-
-
 
     DropShadow{
         anchors.fill: background

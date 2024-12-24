@@ -42,6 +42,7 @@ Item {
                 param.visible = false
             }
         }
+        text:"0"
 
         onTextChanged: paramTextChanged(text)
     }

@@ -37,7 +37,7 @@ Rectangle{
             Connections{
                 target: lightController.pcOnlineCom
                 function onIsOpenedChanged(){
-                    console.log("recv isOpenedChanged!")
+                    // console.log("recv isOpenedChanged!")
                     if(lightController.pcOnlineCom.isOpened)
                         pcOnlineComSetting.state = "connected"
                     else
@@ -71,7 +71,7 @@ Rectangle{
             Connections{
                 target: lightController.a200OnlineCom
                 function onIsOpenedChanged(){
-                    console.log("recv isOpenedChanged!")
+                    // console.log("recv isOpenedChanged!")
                     if(lightController.a200OnlineCom.isOpened)
                         a200OnlineComSetting.state = "connected"
                     else
@@ -81,6 +81,7 @@ Rectangle{
         }
 
         PwmHzSetting{
+            lightController:background.lightController
         }
     }
 

@@ -15,7 +15,7 @@ void OnlineParam::setColorTemp(int newColorTemp)
     if (m_colorTemp == newColorTemp)
         return;
     m_colorTemp = newColorTemp;
-    qDebug()<<m_colorTemp;
+    // qDebug()<<m_colorTemp;
     emit colorTempChanged();
 }
 
@@ -29,7 +29,7 @@ void OnlineParam::setBrightness(int newBrightness)
     if (m_brightness == newBrightness)
         return;
     m_brightness = newBrightness;
-    qDebug()<<m_brightness;
+    // qDebug()<<m_brightness;
     emit brightnessChanged();
 }
 
@@ -43,7 +43,7 @@ void OnlineParam::setXColorCoord(int newXColorCoord)
     if (m_xColorCoord == newXColorCoord)
         return;
     m_xColorCoord = newXColorCoord;
-    qDebug()<<m_xColorCoord;
+    // qDebug()<<m_xColorCoord;
     emit xColorCoordChanged();
 }
 
@@ -57,7 +57,7 @@ void OnlineParam::setYColorCoord(int newYColorCoord)
     if (m_yColorCoord == newYColorCoord)
         return;
     m_yColorCoord = newYColorCoord;
-    qDebug()<<m_yColorCoord;
+    // qDebug()<<m_yColorCoord;
     emit yColorCoordChanged();
 }
 
@@ -71,6 +71,6 @@ void OnlineParam::setUvValue(int newUvValue)
     if (m_uvValue == newUvValue)
         return;
     m_uvValue = newUvValue;
-    qDebug()<<m_uvValue;
+    // qDebug()<<m_uvValue;
     emit uvValueChanged();
 }

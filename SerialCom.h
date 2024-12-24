@@ -16,7 +16,7 @@ class SerialCom : public QObject
     Q_PROPERTY(QStringList portNameList READ portNameList NOTIFY portNameListChanged FINAL)
     Q_PROPERTY(bool isOpened READ isOpened WRITE setIsOpened NOTIFY isOpenedChanged FINAL)
 public:
-    explicit SerialCom(QObject *parent = nullptr);
+    explicit SerialCom(QString name, QObject *parent = nullptr);
 
     QStringList portNameList() const;
 
@@ -35,6 +35,7 @@ public slots:
     Q_INVOKABLE void openSerialPort();
     Q_INVOKABLE void closeSerialPort();
     Q_INVOKABLE void updatePortNameList();
+    void writeData(const QByteArray &data);
 signals:
 
     void portNameListChanged();
@@ -46,9 +47,6 @@ signals:
     void isOpenedChanged();
 
 private slots:
-
-
-    void writeData(const QByteArray &data);
     void readData();
 
     void handleError(QSerialPort::SerialPortError error);
@@ -56,6 +54,7 @@ private slots:
     void handleWriteTimeout();
 
 private:
+    QString m_name;
     QTimer *m_timer = nullptr;
     QSerialPort *m_serial = nullptr;
     QStringList m_portNameList;

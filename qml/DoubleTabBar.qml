@@ -37,7 +37,7 @@ Item {
 
         }
         else /*if (model instanceof ListModel)*/ {
-            console.log("model is ListModel!")
+            // console.log("model is ListModel!")
             if (!model || model.length === 0) {
                         firstTabBarModel = [];
                         secondTabBarModel = [];

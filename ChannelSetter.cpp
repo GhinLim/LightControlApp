@@ -97,6 +97,7 @@ void ChannelSetter::setIsOpened(bool newIsOpened)
     if (m_isOpened == newIsOpened)
         return;
     m_isOpened = newIsOpened;
+    qDebug()<<"channel"<<m_index+1<<" 's 'isOpened' is set:"<<m_isOpened;
     saveInput(m_isOpened,isOpenedKey);
     emit isOpenedChanged();
     emit updateOtherChannels(m_index,!m_isOpened);
@@ -112,6 +113,7 @@ void ChannelSetter::setColorTemp(int newColorTemp)
     if (m_colorTemp == newColorTemp)
         return;
     m_colorTemp = newColorTemp;
+    qDebug()<<"channel"<<m_index+1<<" 's 'colorTemp' is set:"<<m_colorTemp;
     saveInput(m_colorTemp,colorTempKey);
     emit colorTempChanged();
 }
@@ -126,6 +128,7 @@ void ChannelSetter::setBrightness(int newBrightness)
     if (m_brightness == newBrightness)
         return;
     m_brightness = newBrightness;
+    qDebug()<<"channel"<<m_index+1<<" 's 'brightness' is set:"<<m_brightness;
     saveInput(m_brightness,brightnessKey);
     emit brightnessChanged();
 }
@@ -140,6 +143,7 @@ void ChannelSetter::setTotalBright(int newTotalBright)
     if (m_totalBright == newTotalBright)
         return;
     m_totalBright = newTotalBright;
+    qDebug()<<"channel"<<m_index+1<<" 's 'totalBright' is set:"<<m_totalBright;
     saveInput(m_totalBright,totalBrightKey);
     emit totalBrightChanged();
 }

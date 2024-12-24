@@ -25,6 +25,7 @@ void PwmSetter::setIsOpened(bool newIsOpened)
     if (m_isOpened == newIsOpened)
         return;
     m_isOpened = newIsOpened;
+    qDebug()<<"channel"<<m_channelIndex+1<<" pwm"<<m_index+1<<" 's 'isOpened' is set:"<<m_isOpened;
     saveInput(m_isOpened,isOpenedKey);
     emit isOpenedChanged();
 
@@ -47,6 +48,7 @@ void PwmSetter::setValue(int newValue)
     if (m_value == newValue)
         return;
     m_value = newValue;
+    qDebug()<<"channel"<<m_channelIndex+1<<" pwm"<<m_index+1<<" 's 'value' is set:"<<m_value;
     saveInput(m_value,valueKey);
     emit valueChanged();
 
@@ -65,6 +67,7 @@ void PwmSetter::setEnabled(bool newEnabled)
     if (m_enabled == newEnabled)
         return;
     m_enabled = newEnabled;
+    qDebug()<<"channel"<<m_channelIndex+1<<" pwm"<<m_index+1<<" 's 'enabled' is set:"<<m_enabled;
     saveInput(m_enabled,enabledKey);
     emit enabledChanged();
 
