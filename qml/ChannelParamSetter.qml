@@ -56,7 +56,7 @@ Item {
             // 定义一个 Timer 用来持续减少数字
             Timer {
                 id: minusTimer
-                interval: 100 // 每100毫秒触发一次
+                interval: 200 // 每100毫秒触发一次
                 running: false // 初始时 Timer 不运行
                 repeat: true // 设置为重复模式
                 onTriggered: {
@@ -122,7 +122,7 @@ Item {
             // 定义一个 Timer 用来持续增加数字
             Timer {
                 id: addTimer
-                interval: 100 // 每100毫秒触发一次
+                interval: 200 // 每100毫秒触发一次
                 running: false // 初始时 Timer 不运行
                 repeat: true // 设置为重复模式
                 onTriggered: {

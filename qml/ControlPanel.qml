@@ -126,6 +126,24 @@ Item{
         font.family: "Consolas"
         font.bold: true
     }
+
+    Timer{
+        id:timer
+        interval: 400
+        repeat: true
+        onTriggered: {
+            doubleTabBar.selectedIndex++
+            if(doubleTabBar.selectedIndex >= 11){
+                doubleTabBar.selectedIndex = 0
+                timer.stop()
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        doubleTabBar.selectedIndex = 0
+        timer.start()
+    }
 }
 
 

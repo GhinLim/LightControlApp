@@ -11,7 +11,7 @@ ApplicationWindow {
     minimumWidth:950
     minimumHeight: 1080
     Material.accent: Material.Indigo
-    title: "Lighting Controller 1.0.1"
+    title: "Lighting Controller 1.0.2"
 
     Component.onCompleted: {
         stackView.refreshData()

@@ -29,8 +29,11 @@ public:
 
     SerialCom *a200OnlineCom() const;
 
+    Q_INVOKABLE void sendPwmHz();
+
     int pwmHz() const;
     void setPwmHz(int newPwmHz);
+
 
 signals:
     void channelSetterListChanged();

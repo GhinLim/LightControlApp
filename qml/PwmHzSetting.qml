@@ -31,19 +31,20 @@ Item {
 
         validator: IntValidator {
             bottom: 1
-            top: 24000
+            top: 400000000
         }
 
         // 监听文本变化
         onTextChanged: {
             if(text === "0"){
                 text = "1"
-            }else if(Number(text)> 24000){
-                text = "24000"
+            }else if(Number(text)> 400000000){
+                text = "400000000"
             }
-            if(text!=="" && Number(text)!==lightController.pwmHz){
+            if(text!==""){
                 // console.log("lightController.pwmHz:",lightController.pwmHz,"text:",Number(text))
                 button.enabled = true
+                lightController.pwmHz = Number(textField.text)
             }else{
                 // console.log("lightController.pwmHz:",lightController.pwmHz,"text:",Number(text))
                 button.enabled = false
@@ -79,7 +80,7 @@ Item {
         Material.background: Material.Indigo
         Material.foreground: "white"
         Image {
-            source:  "../image/save.png"
+            source:  "../image/send.png"
             width: 15
             height: 15
             anchors.left: parent.left
@@ -87,13 +88,12 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
         }
         // 按钮文本
-        text: qsTr("Save")
+        text: qsTr("Send")
 
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         onClicked: {
-            lightController.pwmHz = Number(textField.text)
-            enabled = false
+            lightController.sendPwmHz()
         }
     }
 }

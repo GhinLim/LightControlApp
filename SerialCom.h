@@ -31,13 +31,12 @@ public:
     void setIsOpened(bool newIsOpened);
 
 public slots:
-
     Q_INVOKABLE void openSerialPort();
     Q_INVOKABLE void closeSerialPort();
     Q_INVOKABLE void updatePortNameList();
-    void writeData(const QByteArray &data);
-signals:
+    Q_INVOKABLE void writeData(const QByteArray &data);
 
+signals:
     void portNameListChanged();
 
     void currentPortNameChanged();
@@ -48,7 +47,6 @@ signals:
 
 private slots:
     void readData();
-
     void handleError(QSerialPort::SerialPortError error);
     void handleBytesWritten(qint64 bytes);
     void handleWriteTimeout();

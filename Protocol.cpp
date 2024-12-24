@@ -42,14 +42,10 @@ void Protocol::init()
 
         stream<<static_cast<qint8>(0xFA);
         stream<<static_cast<qint8>(0x1B);
-        stream<<static_cast<qint8>(0x01);
-        stream<<static_cast<qint16>(lightController->pwmHz());
 
         QString frameInfo;
-        frameInfo += "[帧头:0xFA] ";
+        frameInfo += "主面板控制数据帧结构：[帧头:0xFA] ";
         frameInfo += "[帧长度:0x1B] ";
-        frameInfo += "[PWM频率开关:0x01] ";
-        frameInfo += QString("[PWM频率值:%1] ").arg(QString::asprintf("0x%02X 0x%02X", (static_cast<qint16>(lightController->pwmHz()) >> 8) & 0xFF, static_cast<qint16>(lightController->pwmHz()) & 0xFF));
 
         QList<ChannelSetter*> channelSetterList = lightController->channelSetterList().toList<QList<ChannelSetter*>>();
         for (int i = 0; i < 12; i++) {

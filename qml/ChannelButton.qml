@@ -46,7 +46,7 @@ TabButton {
         Switch {
             id: sw
             rotation: -90
-            scale: 0.45
+            scale: 0.6
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: neonText.left
             anchors.rightMargin: -25
