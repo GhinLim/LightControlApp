@@ -5,6 +5,7 @@ import QtQuick.Controls.Material
 Item {
     property var lightController
     property int _value: lightController.pwmHz
+    property alias sendBtnEnabled: button.enabled
     on_ValueChanged: textField.text = String(lightController.pwmHz)
     width: 600
     height:80

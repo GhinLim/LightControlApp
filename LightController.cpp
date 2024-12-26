@@ -149,11 +149,11 @@ void LightController::sendPwmHz()
     QByteArray byteArray;
     QDataStream stream(&byteArray, QIODevice::WriteOnly);
 
-    stream<<static_cast<qint8>(0xFA);
+    stream<<static_cast<qint8>(0xFB);
     stream<<static_cast<qint8>(0x1B);
 
     QString frameInfo;
-    frameInfo += "PWM频率设定数据帧结构：[帧头:0xFA] ";
+    frameInfo += "PWM频率设定数据帧结构：[帧头:0xFB] ";
     frameInfo += "[帧长度:0x1B] ";
 
     stream << static_cast<qint32>(m_pwmHz);

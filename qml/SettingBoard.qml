@@ -38,10 +38,15 @@ Rectangle{
                 target: lightController.pcOnlineCom
                 function onIsOpenedChanged(){
                     // console.log("recv isOpenedChanged!")
-                    if(lightController.pcOnlineCom.isOpened)
+                    if(lightController.pcOnlineCom.isOpened){
                         pcOnlineComSetting.state = "connected"
-                    else
+                        pwmHzSetting.sendBtnEnabled = true
+                    }
+                    else{
                         pcOnlineComSetting.state = "disconnected"
+                        pwmHzSetting.sendBtnEnabled = false
+                    }
+
                 }
             }
         }
@@ -81,7 +86,9 @@ Rectangle{
         }
 
         PwmHzSetting{
+            id:pwmHzSetting
             lightController:background.lightController
+            Component.onCompleted: sendBtnEnabled = false
         }
     }
 
