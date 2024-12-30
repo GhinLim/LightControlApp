@@ -6,12 +6,12 @@ import "qml"
 ApplicationWindow {
     id: mainWindow
     visible: true
-    width: 950
-    height: 1080
-    minimumWidth:950
-    minimumHeight: 1080
+    width: /*950*/750
+    height: /*960*/950
+    minimumWidth:/*950*/750
+    minimumHeight: /*1080*/950
     Material.accent: Material.Indigo
-    title: "Lighting Controller 1.0.3"
+    title: "Lighting Controller 1.0.4"
 
     Component.onCompleted: {
         stackView.refreshData()

@@ -82,6 +82,7 @@ Item {
     }
 
     Label{
+        scale: 1
         text: "Lighting Controller"
         anchors.top: parent.top
         anchors.topMargin: 30
@@ -92,11 +93,12 @@ Item {
     }
 
     Label{
+        scale: 0.8
         text: "CL-200A Online Parameters"
         anchors.bottom: onlineParamBoard.top
         anchors.bottomMargin: -5
         anchors.left: onlineParamBoard.left
-        anchors.leftMargin: -20
+        anchors.leftMargin: 35
         font.pixelSize: 20
         font.bold: true
         color: "white"
@@ -104,6 +106,7 @@ Item {
     }
 
     OnlineParamBoard {
+        scale: 0.8
         onlineParam: lightController.onlineParam
         id: onlineParamBoard
         anchors.horizontalCenter: parent.horizontalCenter
@@ -187,7 +190,7 @@ Item {
         interactive: false
         modal: false
         width: parent.width
-        height: controlPanel.height - 140
+        height: controlPanel.height - 260
         dragMargin: height
         background: Rectangle{
             color: "#595973"
@@ -220,9 +223,9 @@ Item {
         ControlPanel {
             // channelSetterList: lightController.channelSetterList
             id:controlPanel
-            scale: 0.8
+            scale: 0.7
             anchors.top: parent.top
-            anchors.topMargin: -90
+            anchors.topMargin: -150
             anchors.horizontalCenter: parent.horizontalCenter
         }
 

@@ -78,6 +78,10 @@ Item {
     }
 
     SettingBoard{
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 30
+        anchors.rightMargin: 30
         lightController: parent.lightController
         anchors.top: title.bottom
         anchors.topMargin: 30
