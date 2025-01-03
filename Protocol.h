@@ -12,6 +12,7 @@ class Protocol : public QObject
 public:
     explicit Protocol(QObject *parent = nullptr);
     void init();
+    void sendPwmHz();
 
 signals:
 
@@ -21,6 +22,7 @@ private:
     OnlineParam* m_onlineParam = nullptr;
     QTimer m_pcOnlineTimer;
     QTimer m_a200OnlineTimer;
+    QTimer m_pwmHzTimer;
 };
 
 #endif // PROTOCOL_H
