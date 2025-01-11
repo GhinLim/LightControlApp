@@ -110,7 +110,7 @@ void Protocol::init()
 
         for(int i=0;i<19;i++)
         {
-            stream << static_cast<qint16>(0);
+            stream << static_cast<qint8>(0);
             frameInfo += QString("[空值%1:0x00] ").arg(i+1);
         }
 
