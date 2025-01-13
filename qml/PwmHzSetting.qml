@@ -90,7 +90,6 @@ Item {
         }
         // 按钮文本
         text: qsTr("Send")
-
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         onClicked: {

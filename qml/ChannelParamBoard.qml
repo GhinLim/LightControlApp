@@ -58,6 +58,29 @@ Row {
             setterText = text
         }
     }
+
+    ChannelParamSetter{
+        property string setterText: channelParameters.brightness
+        function save(){
+            channelParameters.brightness = Number(setterText)
+            isBrightEqual = true
+        }
+
+        id:brightCPS
+        title:"Brightness"
+        source:"../image/brightness.png"
+        value: channelParameters.brightness
+        onParamTextChanged: {
+            if(channelParameters.brightness === Number(text)){
+                isBrightEqual = true
+            }else{
+                isBrightEqual = false
+            }
+            checkDataEquality()
+            setterText = text
+        }
+    }
+
     ChannelParamSetter{
         property string setterText: channelParameters.totalBright
         function save(){
@@ -82,27 +105,6 @@ Row {
 
         onMultiplierChanged:{
             root.multiplierChanged(multiplier)
-        }
-    }
-    ChannelParamSetter{
-        property string setterText: channelParameters.brightness
-        function save(){
-            channelParameters.brightness = Number(setterText)
-            isBrightEqual = true
-        }
-
-        id:brightCPS
-        title:"Brightness"
-        source:"../image/brightness.png"
-        value: channelParameters.brightness
-        onParamTextChanged: {
-            if(channelParameters.brightness === Number(text)){
-                isBrightEqual = true
-            }else{
-                isBrightEqual = false
-            }
-            checkDataEquality()
-            setterText = text
         }
     }
 }

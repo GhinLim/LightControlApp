@@ -55,7 +55,7 @@ Item{
                 onDataEqual: {
                     // 当前 ParamBoard 的 dataEqual 信号
                     // if (currentItem === parent) {  // 确保只有当前显示的 ParamBoard 会改变 saveBtn 的状态
-                        saveBtn.enabled = !isEqual
+                    saveBtn.enabled = !isEqual
                     // }
                 }
                 onInquireOccupation: {
@@ -95,24 +95,26 @@ Item{
     }
 
     Button {
-        id: saveBtn
-        anchors.right: swipeView.right
-        anchors.rightMargin: 50
-        anchors.verticalCenter: title1.verticalCenter
-        width: 56
-        height: 38
-        Material.background: Material.Indigo
-        // layer.enabled: true
-        // layer.smooth: true
-        contentItem: Image {
-            scale: 1.6
-            anchors.centerIn: parent
-            source: "../image/save.png"
-            fillMode: Image.PreserveAspectFit
-            smooth: true // 启用抗锯齿
-        }
-        onClicked: swipeView.currentItem.save()
-    }
+         id: saveBtn
+         anchors.right: swipeView.right
+         anchors.rightMargin: 50
+         anchors.verticalCenter: title1.verticalCenter
+         width: 100 // 增加宽度以确保文本居中
+         height: 50 // 设置按钮高度
+         Material.background: Material.Indigo
+         Material.foreground: "white"
+         text: "Save"
+         font.pixelSize: 20
+         Image {
+             source:  "../image/save.png"
+             width: 15
+             height: 15
+             anchors.left: parent.left
+             anchors.leftMargin: 10
+             anchors.verticalCenter: parent.verticalCenter
+         }
+         onClicked: swipeView.currentItem.save()
+     }
 
     Label{
         id:title2
