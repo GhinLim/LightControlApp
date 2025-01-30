@@ -1,5 +1,7 @@
 #include "Protocol.h"
 #include "LightController.h"
+#include "ChannelSetter.h"
+#include <QEventLoop>
 
 Protocol::Protocol(QObject *parent)
     : QObject{parent}
@@ -18,23 +20,93 @@ void Protocol::init()
     m_a200OnlineTimer.setInterval(500);
     m_pwmHzTimer.setInterval(500);
 
-    connect(m_pcOnlineCom, &SerialCom::isOpenedChanged, &m_pcOnlineTimer,
-            [this]() {
-                if (m_pcOnlineCom->isOpened()) {
-                    m_pcOnlineTimer.start();
-                } else {
-                    m_pcOnlineTimer.stop();
-                }
-            });
+    connect(m_pcOnlineCom, &SerialCom::isOpenedChanged, this, [this]() {
+        if (m_pcOnlineCom->isOpened())
+        {
+
+            //初始化成功后，开启测量定时器
+            m_pcOnlineTimer.start();
+        }
+        else
+        {
+            m_pcOnlineTimer.stop();
+        }
+    });
 
     connect(m_a200OnlineCom, &SerialCom::isOpenedChanged, &m_a200OnlineTimer,
             [this]() {
                 if (m_a200OnlineCom->isOpened()) {
+                    //初始化
+                    QEventLoop loop;
+                    QTimer sendTimer;
+                    QTimer timeoutTimer;
+                    QMetaObject::Connection sendConnection;
+                    QMetaObject::Connection readConnection;
+                    bool replyReceived = false;
+
+                    // 设置超时定时器
+                    timeoutTimer.setInterval(3000);
+                    timeoutTimer.setSingleShot(true);
+
+                    // 发送定时器每500ms触发一次
+                    sendTimer.setInterval(500);
+
+
+                    // 发送命令54  (设置PC连接模式)
+                    sendConnection = connect(&sendTimer, &QTimer::timeout, this, [this]() {
+                        if(m_a200OnlineCom->isOpened()){
+                            QByteArray command = "\x0200541\x0313\r\n"; // 命令54, BCC=13  (十六进制转换为QByteArray)
+                            m_a200OnlineCom->writeData(command);
+                            qDebug() << "Data sent:" << command;
+                        }else{
+                            showToast(info,"退出初始化");
+                            return;
+                        }
+                    });
+
+                    readConnection = connect(m_a200OnlineCom, &SerialCom::readReady, this,[&]() {
+                        QByteArray receivedData = m_a200OnlineCom->readAll();
+                        qDebug() << "Data received:" << receivedData;
+                        if (receivedData.contains("...")) {
+                            replyReceived = true;
+                            loop.quit(); // 收到期望的回复，退出事件循环
+                        }
+                    });
+
+                    // 启动定时器
+                    sendTimer.start();
+                    timeoutTimer.start();
+
+                    // 进入事件循环，等待信号或超时
+                    showToast(info,"正在设置PC连接模式");
+                    loop.exec();
+
+                    // 停止定时器
+                    sendTimer.stop();
+                    timeoutTimer.stop();
+
+                    if (replyReceived) {
+                        qDebug() << "Expected reply received!";
+                        disconnect(sendConnection);
+                        disconnect(readConnection);
+                    } else {
+                        qDebug() << "Exited without receiving expected reply.";
+
+                    }
+
+
                     m_a200OnlineTimer.start();
                 } else {
                     m_a200OnlineTimer.stop();
                 }
             });
+    connect(m_a200OnlineCom,&SerialCom::readReady,this,[this](){
+
+    });
+
+    connect(&m_a200OnlineTimer,&QTimer::timeout,this,[this](){
+        //只在初始化成功后用来测量
+    });
 
     connect(&m_pcOnlineTimer,&QTimer::timeout,this,[this](){
         LightController* lightController = qobject_cast<LightController*>(parent());
@@ -136,7 +208,6 @@ void Protocol::init()
             }
         }
     });
-
 }
 
 void Protocol::sendPwmHz()

@@ -85,6 +85,6 @@ Item {
         lightController: parent.lightController
         anchors.top: title.bottom
         anchors.topMargin: 30
-        anchors.horizontalCenter: parent.horizontalCenter
+        // anchors.horizontalCenter: parent.horizontalCenter
     }
 }

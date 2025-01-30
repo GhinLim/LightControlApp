@@ -24,7 +24,7 @@ public:
 
 signals:
     void isOpenedChanged();
-    void valueChanged();
+    void valueChanged(int channelIndex, int index);
     void enabledChanged();
     void maxDetect();
     void updatePwmOfOtherChannels(int channelIndex, int index, bool enabled);

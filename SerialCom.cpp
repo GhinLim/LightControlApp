@@ -1,6 +1,7 @@
 #include "SerialCom.h"
 #include <QDebug>
 #include <chrono>
+#include "Tools.hpp"
 
 static constexpr std::chrono::seconds kWriteTimeout = std::chrono::seconds{5};
 
@@ -16,7 +17,7 @@ SerialCom::SerialCom(QString name, QObject *parent)
     connect(m_timer, &QTimer::timeout, this, &SerialCom::handleWriteTimeout);
     m_timer->setSingleShot(true);
 
-    connect(m_serial, &QSerialPort::readyRead, this, &SerialCom::readData);
+    connect(m_serial, &QSerialPort::readyRead, this, [this](){emit readReady();});
     connect(m_serial, &QSerialPort::bytesWritten, this, &SerialCom::handleBytesWritten);
 }
 
@@ -27,10 +28,13 @@ void SerialCom::openSerialPort()
 
     if (m_serial->open(QIODevice::ReadWrite)) {
         qDebug()<<m_name<<":open succeed!";
-        setIsOpened(true);
+        m_isOpened = true;
+        emit isOpenedChanged();
     } else {
-        setIsOpened(false);
-        qDebug()<<m_name<<":"<<m_serial->errorString();
+        m_isOpened = false;
+        emit isOpenedChanged();
+        QString error = m_name + ":" + m_serial->errorString();
+        emit errorOccur(error);
     }
 }
 
@@ -40,9 +44,12 @@ void SerialCom::closeSerialPort()
     {
         m_serial->close();
         qDebug()<<m_name<<":close!";
-        setIsOpened(false);
+        m_isOpened = false;
+        emit isOpenedChanged();
     }else{
-        qDebug()<<m_name<<":"<<m_serial->errorString();
+        QString error = m_name+":"+m_serial->errorString();
+        qDebug()<<error;
+        emit errorOccur(error);
     }
 }
 
@@ -70,22 +77,19 @@ void SerialCom::writeData(const QByteArray &data)
                                  "Error: %2").arg(m_serial->portName(),
                                        m_serial->errorString());
         qDebug()<<m_name<<error;
+        emit errorOccur(m_name+error);
     }
-}
-
-void SerialCom::readData()
-{
-    const QByteArray data = m_serial->readAll();
-    qDebug()<<m_name<<"recv:"<<data;
 }
 
 void SerialCom::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::ResourceError) {
-        qDebug()<<m_name<<":"<<m_serial->errorString();
         closeSerialPort();
         updatePortNameList();
     }
+    QString _error = m_name+":"+m_serial->errorString();
+    qDebug()<<_error;
+    emit errorOccur(_error);
 }
 
 void SerialCom::handleBytesWritten(qint64 bytes)
@@ -97,11 +101,11 @@ void SerialCom::handleBytesWritten(qint64 bytes)
 
 void SerialCom::handleWriteTimeout()
 {
-    const QString error = tr("Write operation timed out for port %1.\n"
+    const QString error = m_name + ":" + tr("Write operation timed out for port %1.\n"
                              "Error: %2").arg(m_serial->portName(),
                                    m_serial->errorString());
-    // showWriteError(error);
-    qDebug()<<m_name<<":"<<error;
+    qDebug()<<error;
+    emit errorOccur(error);
 }
 
 
@@ -142,10 +146,12 @@ bool SerialCom::isOpened() const
     return m_isOpened;
 }
 
-void SerialCom::setIsOpened(bool newIsOpened)
+QByteArray SerialCom::readAll()
 {
-    if (m_isOpened == newIsOpened)
-        return;
-    m_isOpened = newIsOpened;
-    emit isOpenedChanged();
+    return m_serial->readAll();
+}
+
+void SerialCom::clear()
+{
+    m_serial->clear();
 }

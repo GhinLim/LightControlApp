@@ -39,14 +39,14 @@ Item {
         else /*if (model instanceof ListModel)*/ {
             // console.log("model is ListModel!")
             if (!model || model.length === 0) {
-                        firstTabBarModel = [];
-                        secondTabBarModel = [];
-                        return;
-                    }
+                firstTabBarModel = [];
+                secondTabBarModel = [];
+                return;
+            }
 
-                    let mid = Math.floor(model.length / 2); // 中间索引
-                    firstTabBarModel = model.slice(0, mid); // 前半部分
-                    secondTabBarModel = model.slice(mid);  // 后半部分
+            let mid = Math.floor(model.length / 2); // 中间索引
+            firstTabBarModel = model.slice(0, mid); // 前半部分
+            secondTabBarModel = model.slice(mid);  // 后半部分
         }
     }
 
@@ -113,6 +113,11 @@ Item {
                 onClicked: selectedIndex = index
                 onSwCheckedChanged: modelData.isOpened = swChecked
                 Component.onCompleted: swChecked = modelData.isOpened
+                // 假设 modelData 有一个信号 isOpenedChanged
+                Connections {
+                    target: modelData
+                    function onIsOpenedChanged(){ swChecked = modelData.isOpened}
+                }
             }
         }
     }
@@ -161,6 +166,10 @@ Item {
                 }
                 onSwCheckedChanged: modelData.isOpened = swChecked
                 Component.onCompleted: swChecked = modelData.isOpened
+                Connections {
+                    target: modelData
+                    function onIsOpenedChanged(){ swChecked = modelData.isOpened }
+                }
             }
         }
 

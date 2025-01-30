@@ -46,5 +46,25 @@ ApplicationWindow {
             }
         }
     }
+
+    Message{
+        id:messageTip
+        z: 1
+        parent: Overlay.overlay
+    }
+
+    Connections{
+        target: LightController
+        function onMessage(type,msg){
+            message(type,msg)
+        }
+    }
+
+    function message(type, message) {
+        if(type!=='success'&&type!=='error'&&type!=='info'){
+            return false
+        }
+        messageTip.open(type, message)
+    }
 }
 

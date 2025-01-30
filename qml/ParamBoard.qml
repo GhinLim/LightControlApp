@@ -85,7 +85,7 @@ Item{
 
         function checkDataEquality(){
             for (var i = 0; i < repeater.count; i++) {
-                if(!repeater.itemAt(i).checkDataEquality()){
+                if(repeater.itemAt(i) !== null && !repeater.itemAt(i).checkDataEquality()){
                     // console.log("PwmSetter:",i,"不相等")
                     isPwmParamEqual = false
                     root.checkDataEquality()

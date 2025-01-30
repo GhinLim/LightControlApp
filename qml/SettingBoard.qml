@@ -12,6 +12,17 @@ Rectangle{
 
     Column{
         anchors.horizontalCenter: parent.horizontalCenter
+        ControlModeSetting{
+            id:controlModeSetting
+            model: lightController.settingManager.controlModeList
+            Component.onCompleted: {
+                currentIndex = lightController.settingManager.controlMode
+                onCurrentIndexChanged.connect(function(){
+                    lightController.settingManager.controlMode = currentIndex
+                })
+            }
+        }
+
         ComSettingItem{
             id:pcOnlineComSetting
             model: lightController.pcOnlineCom.portNameList

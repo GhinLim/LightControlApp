@@ -1,6 +1,7 @@
 #include "PwmSetter.h"
 #include "Tools.hpp"
 #include "ChannelSetter.h"
+
 PwmSetter::PwmSetter(int channelIndex, int index, QObject *parent)
     : QObject{parent},
     m_channelIndex(channelIndex),
@@ -50,7 +51,7 @@ void PwmSetter::setValue(int newValue)
     m_value = newValue;
     qDebug()<<"channel"<<m_channelIndex+1<<" pwm"<<m_index+1<<" 's 'value' is set:"<<m_value;
     saveInput(m_value,valueKey);
-    emit valueChanged();
+    emit valueChanged(m_channelIndex,m_index);
 
     if(m_enabled && m_isOpened){
         emit maxDetect();

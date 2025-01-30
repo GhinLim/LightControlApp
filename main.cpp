@@ -6,6 +6,7 @@
 #include "ChannelSetter.h"
 #include "PwmSetter.h"
 #include "OnlineParam.h"
+#include "SettingManager.h"
 #include "Tools.hpp"
 
 int main(int argc, char *argv[])
@@ -21,10 +22,14 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/LightControlApp/image/appLogo.png"));
     qDebug()<<"GLHF";
 
+    LightController* lightController =qobject_cast<LightController*>(LightController::instance());
+    lightController->init();
+
     qmlRegisterSingletonType<LightController>("LightController", 1, 0, "LightController",LightController::instance);
     qmlRegisterType         <ChannelSetter>  ("LightController", 1, 0, "ChannelSetter");
     qmlRegisterType         <PwmSetter>      ("LightController", 1, 0, "PwmSetter");
     qmlRegisterType         <OnlineParam>    ("LightController", 1, 0, "OnlineParam");
+    qmlRegisterType         <SettingManager> ("LightController", 1, 0, "SettingManager");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/LightControlApp/Main.qml"));
