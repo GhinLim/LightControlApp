@@ -1,3 +1,4 @@
+#include <QtEndian>
 #include "Protocol.h"
 #include "LightController.h"
 #include "ChannelSetter.h"
@@ -58,9 +59,41 @@ void Protocol::init()
 
                     // 发送命令54  (设置PC连接模式)
                     sendConnection = connect(&sendTimer, &QTimer::timeout, [&]() {
-                            QByteArray command = "\x0200541\x0313\r\n"; // 命令54, BCC=13  (十六进制转换为QByteArray)
-                            m_a200OnlineCom->writeData(command);
-                            qDebug() << "Data sent:" << command;
+                        QByteArray byteArray;
+                        QDataStream stream(&byteArray, QIODevice::WriteOnly);
+
+                        // 1. 添加 STX (0x02)
+                        stream << (quint8)0x02;
+
+                        // 2. 发送命令字符串 "00541 "
+                        QByteArray command = "00541 ";
+                        stream.writeRawData(command.constData(), command.size());
+
+                        // 3. 计算 BCC（从 "00" 开始到 ETX 之前）
+                        quint8 bcc = 0;
+                        for (char c : command) {
+                            bcc ^= c;
+                        }
+                        bcc ^= 0x03; // 异或 ETX
+
+                        // 4. 追加 ETX (0x03)
+                        stream << (quint8)0x03;
+
+                        // 5. 追加 BCC（以 ASCII 形式）
+                        QString bccStr = QString("%1").arg(bcc, 2, 16, QChar('0')).toUpper(); // 转换为2位16进制大写字符串
+                        stream.writeRawData(bccStr.toUtf8().constData(), bccStr.size());
+
+                        // 6. 追加 CR + LF (0x0D, 0x0A)
+                        stream << (quint8)0x0D << (quint8)0x0A;
+                            m_a200OnlineCom->writeData(byteArray);
+                            QStringList hexList;
+                            for (const auto& byte : byteArray) {
+                                // 使用QString::asprintf格式化每个字节为0x的十六进制形式
+                                hexList.append(QString::asprintf("0x%02X", static_cast<unsigned char>(byte)));
+                            }
+
+                            // 使用qDebug()输出
+                            qDebug() << "Sent command 54:"<< hexList.join(" ");
                     });
 
                     readConnection = connect(m_a200OnlineCom, &SerialCom::readReady, [&]() {
@@ -230,8 +263,10 @@ void Protocol::init()
         frameInfo += "PWM频率设定数据帧结构：[帧头:0xFB] ";
         frameInfo += "[帧长度:0x1B] ";
 
+        stream.setByteOrder(QDataStream::LittleEndian);  // 设置为小端字节序
         stream << static_cast<qint32>(lightController->pwmHz());
-        frameInfo += QString("[PWM频率:%1] ").arg(QString::asprintf("0x%02X 0x%02X 0x%02X 0x%02X", (static_cast<qint32>(lightController->pwmHz()) >> 24) & 0xFF, (static_cast<qint32>(lightController->pwmHz()) >> 16) & 0xFF, (static_cast<qint32>(lightController->pwmHz()) >> 8) & 0xFF, static_cast<qint32>(lightController->pwmHz()) & 0xFF));
+        // frameInfo += QString("[PWM频率:%1] ").arg(QString::asprintf("0x%02X 0x%02X 0x%02X 0x%02X", (static_cast<qint32>(lightController->pwmHz()) >> 24) & 0xFF, (static_cast<qint32>(lightController->pwmHz()) >> 16) & 0xFF, (static_cast<qint32>(lightController->pwmHz()) >> 8) & 0xFF, static_cast<qint32>(lightController->pwmHz()) & 0xFF));
+        frameInfo += QString("[PWM频率:%1] ").arg(QString::asprintf("0x%02X 0x%02X 0x%02X 0x%02X", static_cast<qint32>(lightController->pwmHz())  & 0xFF, (static_cast<qint32>(lightController->pwmHz()) >> 8) & 0xFF, (static_cast<qint32>(lightController->pwmHz()) >> 16) & 0xFF, (static_cast<qint32>(lightController->pwmHz())>> 24) & 0xFF));
 
         stream<<static_cast<qint8>(0x01);
         frameInfo += "[PWM开关:0x01] ";
