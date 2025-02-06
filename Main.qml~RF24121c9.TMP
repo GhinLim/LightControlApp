@@ -14,27 +14,36 @@ ApplicationWindow {
     title: "Lighting Controller 1.0.7"
 
     Component.onCompleted: {
-        homePage.refreshData()
+        stackView.refreshData()
     }
 
-    HomePage{
-        anchors.fill: parent
-        lightController: LightController
-        id:homePage
-        onPushSettingPage: {
-            homePage.setDrawerOpen(false)
-            settingPage.visible = true
+    StackView{
+        function refreshData(){
+            homePage.refreshData()
         }
-    }
 
-    SettingPage{
-        id:settingPage
-        visible: false
+        id:stackView
         anchors.fill: parent
-        lightController: LightController
-        onBack: {
-            visible = false
-            homePage.setDrawerOpen(true)
+        initialItem:     HomePage{
+            lightController: LightController
+            id:homePage
+            onPushSettingPage: stackView.push(settingPageCpnt)
+        }
+
+        onCurrentItemChanged: {
+            if(stackView.currentItem === homePage){
+                homePage.setDrawerOpen(true)
+            }else{
+                homePage.setDrawerOpen(false)
+            }
+        }
+
+        Component {
+            id:settingPageCpnt
+            SettingPage{
+                lightController: LightController
+                Component.onCompleted: back.connect(stackView.pop)
+            }
         }
     }
 

@@ -45,7 +45,7 @@ void Protocol::init()
                     bool replyReceived = false;
 
                     // 设置超时定时器
-                    timeoutTimer.setInterval(5000);
+                    timeoutTimer.setInterval(3000);
                     timeoutTimer.setSingleShot(true);
 
                     // 发送定时器每500ms触发一次
@@ -53,6 +53,7 @@ void Protocol::init()
 
                     connect(&timeoutTimer, &QTimer::timeout, [&](){
                         qDebug() << "Timeout occurred!";
+                        showToast(error,"请检查电缆是否连接正确");
                         loop.quit(); // 超时，退出事件循环
                     });
 
@@ -66,7 +67,7 @@ void Protocol::init()
                     readConnection = connect(m_a200OnlineCom, &SerialCom::readReady, [&]() {
                         QByteArray receivedData = m_a200OnlineCom->readAll();
                         qDebug() << "Data received:" << receivedData;
-                        if (receivedData.compare("...") == 0) {
+                        if (receivedData.contains("...")) {
                             replyReceived = true;
                             loop.quit(); // 收到期望的回复，退出事件循环
                         }
@@ -90,66 +91,10 @@ void Protocol::init()
                         disconnect(readConnection);
                     } else {
                         qDebug() << "Exited without receiving expected reply.";
-                        showToast(error,"设置PC连接模式失败，请检查电缆是否连接正确");
                         m_a200OnlineCom->closeSerialPort();
                         return;
                     }
 
-                    //等待500ms
-                    timeoutTimer.setInterval(500);
-                    timeoutTimer.start();
-                    loop.exec();
-
-                    // 发送命令55  (设置为保持状态)
-                    showToast(info,"正在设置保持状态");
-                    m_a200OnlineCom->writeData("");
-
-                    //等待500ms
-                    timeoutTimer.start();
-                    loop.exec();
-
-
-                    replyReceived = false;
-                    timeoutTimer.setInterval(5000);
-
-                    // 发送命令40  (设置EXT模式)
-                    sendConnection = connect(&sendTimer, &QTimer::timeout, [&]() {
-                        QByteArray command = "\x0200541\x0313\r\n"; // 命令54, BCC=13  (十六进制转换为QByteArray)
-                        m_a200OnlineCom->writeData(command);
-                        qDebug() << "Data sent:" << command;
-                    });
-
-                    readConnection = connect(m_a200OnlineCom, &SerialCom::readReady, [&]() {
-                        QByteArray receivedData = m_a200OnlineCom->readAll();
-                        qDebug() << "Data received:" << receivedData;
-                        if (receivedData.compare("...") == 0) {
-                            replyReceived = true;
-                            loop.quit(); // 收到期望的回复，退出事件循环
-                        }
-                    });
-
-                    // 启动定时器
-                    sendTimer.start();
-                    timeoutTimer.start();
-
-                    // 进入事件循环，等待信号或超时
-                    showToast(info,"正在设置EXT模式");
-                    loop.exec();
-
-                    // 停止定时器
-                    sendTimer.stop();
-                    timeoutTimer.stop();
-
-                    if (replyReceived) {
-                        qDebug() << "Expected reply received!";
-                        disconnect(sendConnection);
-                        disconnect(readConnection);
-                    } else {
-                        qDebug() << "Exited without receiving expected reply.";
-                        showToast(error,"设置EXT模式失败");
-                        m_a200OnlineCom->closeSerialPort();
-                        return;
-                    }
 
                     m_a200OnlineTimer.start();
                 } else {
