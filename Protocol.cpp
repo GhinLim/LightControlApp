@@ -57,7 +57,10 @@ void Protocol::init()
                         loop.quit(); // 超时，退出事件循环
                     });
 
-                    // 发送命令54  (设置PC连接模式)
+                    /*------------------------------*/
+                    /*Step 2 发送命令54 (设置PC连接模式)*/
+                    /*------------------------------*/
+
                     sendConnection = connect(&sendTimer, &QTimer::timeout, [&]() {
                         QByteArray byteArray;
                         QDataStream stream(&byteArray, QIODevice::WriteOnly);
@@ -66,7 +69,7 @@ void Protocol::init()
                         stream << (quint8)0x02;
 
                         // 2. 发送命令字符串 "00541 "
-                        QByteArray command = "00541 ";
+                        QByteArray command = "00541   ";
                         stream.writeRawData(command.constData(), command.size());
 
                         // 3. 计算 BCC（从 "00" 开始到 ETX 之前）
@@ -85,24 +88,67 @@ void Protocol::init()
 
                         // 6. 追加 CR + LF (0x0D, 0x0A)
                         stream << (quint8)0x0D << (quint8)0x0A;
-                            m_a200OnlineCom->writeData(byteArray);
-                            QStringList hexList;
-                            for (const auto& byte : byteArray) {
-                                // 使用QString::asprintf格式化每个字节为0x的十六进制形式
-                                hexList.append(QString::asprintf("0x%02X", static_cast<unsigned char>(byte)));
-                            }
+                        m_a200OnlineCom->writeData(byteArray);
+                        QStringList hexList;
+                        for (const auto& byte : byteArray) {
+                            // 使用QString::asprintf格式化每个字节为0x的十六进制形式
+                            hexList.append(QString::asprintf("0x%02X", static_cast<unsigned char>(byte)));
+                        }
 
-                            // 使用qDebug()输出
-                            qDebug() << "Sent command 54:"<< hexList.join(" ");
+                        // 使用qDebug()输出
+                        qDebug() << "Sent command 54:"<< hexList.join(" ");
                     });
 
                     readConnection = connect(m_a200OnlineCom, &SerialCom::readReady, [&]() {
                         QByteArray receivedData = m_a200OnlineCom->readAll();
                         qDebug() << "Data received:" << receivedData;
-                        if (receivedData.compare("...") == 0) {
-                            replyReceived = true;
-                            loop.quit(); // 收到期望的回复，退出事件循环
+                        // 1. 检查最小长度 (STX + 命令 + ETX + BCC + CR + LF)
+                        if (receivedData.size() < 14) {
+                            qDebug() << "Invalid response: Too short";
+                            return;
                         }
+
+                        // 2. 检查 STX (0x02) 和 ETX (0x03)
+                        if (receivedData[0] != 0x02 || receivedData[receivedData.size() - 5] != 0x03) {
+                            qDebug() << "Invalid response: Incorrect STX or ETX";
+                            return;
+                        }
+
+                        // 3. 提取命令和设备编号
+                        QByteArray commandData = receivedData.mid(1, 6);  // "0054  "
+                        if (!commandData.startsWith("0054  ")) {
+                            qDebug() << "Unexpected command response:" << commandData;
+                            return;
+                        }
+
+                        // 4. 提取 BCC（倒数第三、第四个字节）
+                        QByteArray receivedBCC = receivedData.mid(receivedData.size() - 4, 2); // BCC 是两个字符的 ASCII
+                        QByteArray expectedBCC;
+
+                        // 计算 BCC（从 "00" 到 ETX）
+                        quint8 calculatedBCC = 0;
+                        for (int i = 1; i < receivedData.size() - 4; i++) {
+                            calculatedBCC ^= receivedData[i];
+                        }
+
+                        // 转换 BCC 为 ASCII 形式
+                        expectedBCC = QString("%1").arg(calculatedBCC, 2, 16, QChar('0')).toUpper().toUtf8();
+
+                        if (receivedBCC != expectedBCC) {
+                            qDebug() << "BCC mismatch: Expected" << expectedBCC << "but got" << receivedBCC;
+                            return;
+                        }
+
+                        // 5. 确保 CR + LF 结尾 (0x0D 0x0A)
+                        if (receivedData[receivedData.size() - 2] != 0x0D || receivedData[receivedData.size() - 1] != 0x0A) {
+                            qDebug() << "Invalid response: Incorrect CR+LF termination";
+                            return;
+                        }
+
+                        qDebug() << "Valid response received from CL-200A!";
+
+                        replyReceived = true;
+                        loop.quit(); // 收到期望的回复，退出事件循环
                     });
 
                     // 启动定时器
@@ -133,19 +179,59 @@ void Protocol::init()
                     timeoutTimer.start();
                     loop.exec();
 
-                    // 发送命令55  (设置为保持状态)
-                    showToast(info,"正在设置保持状态");
-                    m_a200OnlineCom->writeData("");
+                    /*------------------------------*/
+                    /*Step 3 发送命令55 (设置为保持状态)*/
+                    /*------------------------------*/
 
-                    //等待500ms
+                    showToast(info,"正在设置保持状态");
+
+                    QByteArray byteArray;
+                    QDataStream stream(&byteArray, QIODevice::WriteOnly);
+
+                    // 1. 添加 STX (0x02)
+                    stream << (quint8)0x02;
+
+                    // 2. 发送命令字符串 "99551  0"
+                    QByteArray command = "99551  0";
+                    stream.writeRawData(command.constData(), command.size());
+
+                    // 3. 计算 BCC（从 "99" 开始到 ETX 之前）
+                    quint8 bcc = 0;
+                    for (char c : command) {
+                        bcc ^= c;
+                    }
+                    bcc ^= 0x03; // 异或 ETX
+
+                    // 4. 追加 ETX (0x03)
+                    stream << (quint8)0x03;
+
+                    // 5. 追加 BCC（以 ASCII 形式）
+                    QString bccStr = QString("%1").arg(bcc, 2, 16, QChar('0')).toUpper(); // 转换为2位16进制大写字符串
+                    stream.writeRawData(bccStr.toUtf8().constData(), bccStr.size());
+
+                    // 6. 追加 CR + LF (0x0D, 0x0A)
+                    stream << (quint8)0x0D << (quint8)0x0A;
+                    m_a200OnlineCom->writeData(byteArray);
+                    QStringList hexList;
+                    for (const auto& byte : byteArray) {
+                        // 使用QString::asprintf格式化每个字节为0x的十六进制形式
+                        hexList.append(QString::asprintf("0x%02X", static_cast<unsigned char>(byte)));
+                    }
+
+                    // 使用qDebug()输出
+                    qDebug() << "Sent command 55:"<< hexList.join(" ");
+
+                    //命令55发送完毕后需要等待500ms
                     timeoutTimer.start();
                     loop.exec();
 
+                    /*------------------------------*/
+                    /*Step 4 发送命令40 (设置为EXT模式)*/
+                    /*------------------------------*/
 
                     replyReceived = false;
                     timeoutTimer.setInterval(5000);
 
-                    // 发送命令40  (设置EXT模式)
                     sendConnection = connect(&sendTimer, &QTimer::timeout, [&]() {
                         QByteArray command = "\x0200541\x0313\r\n"; // 命令54, BCC=13  (十六进制转换为QByteArray)
                         m_a200OnlineCom->writeData(command);
