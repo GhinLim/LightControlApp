@@ -29,6 +29,7 @@ signals:
 private:
     ControlMode m_controlMode;
     QStringList m_controlModeList;
+    QString controlModeKey = "controlMode";
 };
 
 #endif // SETTINGMANAGER_H

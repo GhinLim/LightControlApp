@@ -11,7 +11,7 @@ ApplicationWindow {
     minimumWidth:/*950*/750
     minimumHeight: /*1080*/950
     Material.accent: Material.Indigo
-    title: "Lighting Controller 1.0.7"
+    title: "Lighting Controller 1.0.8"
 
     Component.onCompleted: {
         homePage.refreshData()

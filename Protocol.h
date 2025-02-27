@@ -13,6 +13,7 @@ public:
     explicit Protocol(QObject *parent = nullptr);
     void init();
     void sendPwmHz();
+    void sendCommand(int num);
 signals:
 
 private:

@@ -6,7 +6,7 @@
 SettingManager::SettingManager(QObject *parent)
     : QObject{parent}
 {
-
+    restoreInput(m_controlMode,controlModeKey);
 }
 
 void SettingManager::init()
@@ -20,7 +20,7 @@ void SettingManager::init()
     m_controlModeList << QString("Multi-CH");
     emit controlModeListChanged();
 
-    connect(this,SettingManager::controlModeChanged,this,[this](){
+    connect(this,&SettingManager::controlModeChanged,this,[this](){
         LightController *lightController = qobject_cast<LightController*>(parent());
         if(lightController != nullptr){
             QList<ChannelSetter*> channelSetterList = lightController->channelSetterList().toList<QList<ChannelSetter*>>();
@@ -61,7 +61,13 @@ void SettingManager::setControlMode(ControlMode newControlMode)
         return;
     m_controlMode = newControlMode;
     qDebug()<<"m_controlMode="<<m_controlMode;
-    showToast(success,"666");
+    saveInput(m_controlMode,controlModeKey);
+    if(m_controlMode == singleChannel){
+        showToast(success,tr("Change to single-channel mode"));
+    }else if(m_controlMode == multichannel){
+        showToast(success,tr("Change to multi-channel mode"));
+    }
+
     emit controlModeChanged();
 }
 

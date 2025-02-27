@@ -12,6 +12,7 @@
 #include <QMutexLocker>
 #include <QDebug>
 #include <QTextStream>
+#include "SettingManager.h "
 
 // 使用 C++17 的 inline 变量特性
 inline QMutex* mutex = nullptr;
@@ -159,6 +160,11 @@ inline void saveInput (const QString target,const QString &key)
     QSettings settings("Julian Wong","Julian Wong's App");
     settings.setValue(key,target);
 }
+inline void saveInput(const SettingManager::ControlMode target,const QString &key)
+{
+    QSettings settings("Julian Wong","Julian Wong's App");
+    settings.setValue(key,target);
+}
 
 inline void restoreInput(QVariant &target,const QString &key,QVariant defaultValue = 0)
 {
@@ -184,6 +190,20 @@ inline void restoreInput(QString &target,const QString &key, QString defaultValu
 {
     QSettings settings("Julian Wong","Julian Wong's App");
     target = settings.value(key,defaultValue).toString();
+}
+inline void restoreInput(SettingManager::ControlMode &target,const QString &key,SettingManager::ControlMode defaultValue = SettingManager::ControlMode::singleChannel){
+    QSettings settings("Julian Wong","Julian Wong's App");
+    int tmp = settings.value(key,defaultValue).toInt();
+    switch (tmp) {
+    case 0:
+        target = SettingManager::ControlMode::singleChannel;
+        break;
+    case 1:
+        target = SettingManager::ControlMode::multichannel;
+        break;
+    default:
+        break;
+    }
 }
 
 #endif //TOOL_H

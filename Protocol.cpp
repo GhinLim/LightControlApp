@@ -68,7 +68,7 @@ void Protocol::init()
                         // 1. 添加 STX (0x02)
                         stream << (quint8)0x02;
 
-                        // 2. 发送命令字符串 "00541 "
+                        // 2. 发送命令字符串 "00541    "
                         QByteArray command = "00541   ";
                         stream.writeRawData(command.constData(), command.size());
 
@@ -229,13 +229,47 @@ void Protocol::init()
                     /*Step 4 发送命令40 (设置为EXT模式)*/
                     /*------------------------------*/
 
+                    showToast(info,"正在设置EXT模式");
+
                     replyReceived = false;
                     timeoutTimer.setInterval(5000);
 
                     sendConnection = connect(&sendTimer, &QTimer::timeout, [&]() {
-                        QByteArray command = "\x0200541\x0313\r\n"; // 命令54, BCC=13  (十六进制转换为QByteArray)
-                        m_a200OnlineCom->writeData(command);
-                        qDebug() << "Data sent:" << command;
+                        QByteArray byteArray;
+                        QDataStream stream(&byteArray, QIODevice::WriteOnly);
+
+                        // 1. 添加 STX (0x02)
+                        stream << (quint8)0x02;
+
+                        // 2. 发送命令字符串 "004010  "
+                        QByteArray command = "004010  ";
+                        stream.writeRawData(command.constData(), command.size());
+
+                        // 3. 计算 BCC（从 "00" 开始到 ETX 之前）
+                        quint8 bcc = 0;
+                        for (char c : command) {
+                            bcc ^= c;
+                        }
+                        bcc ^= 0x03; // 异或 ETX
+
+                        // 4. 追加 ETX (0x03)
+                        stream << (quint8)0x03;
+
+                        // 5. 追加 BCC（以 ASCII 形式）
+                        QString bccStr = QString("%1").arg(bcc, 2, 16, QChar('0')).toUpper(); // 转换为2位16进制大写字符串
+                        stream.writeRawData(bccStr.toUtf8().constData(), bccStr.size());
+
+                        // 6. 追加 CR + LF (0x0D, 0x0A)
+                        stream << (quint8)0x0D << (quint8)0x0A;
+                        m_a200OnlineCom->writeData(byteArray);
+                        QStringList hexList;
+                        for (const auto& byte : byteArray) {
+                            // 使用QString::asprintf格式化每个字节为0x的十六进制形式
+                            hexList.append(QString::asprintf("0x%02X", static_cast<unsigned char>(byte)));
+                        }
+
+                        // 使用qDebug()输出
+                        qDebug() << "Sent command 40:"<< hexList.join(" ");
                     });
 
                     readConnection = connect(m_a200OnlineCom, &SerialCom::readReady, [&]() {
@@ -393,4 +427,72 @@ void Protocol::sendPwmHz()
         m_pcOnlineTimer.stop();
         m_pwmHzTimer.start();
     }
+}
+
+void Protocol::sendCommand(int num)
+{
+    bool isMatched;
+    QByteArray command;
+
+    switch (num) {
+    case 54:
+        command = "00541   ";
+        isMatched = true;
+        break;
+    case 55:
+        command = "99551  0";
+        isMatched = true;
+        break;
+    case 40:
+        command = "004010  ";
+        isMatched = true;
+        break;
+    default:
+        isMatched = false;
+        break;
+    }
+
+    if(isMatched){
+        QByteArray byteArray;
+        QDataStream stream(&byteArray, QIODevice::WriteOnly);
+
+        // 1. 添加 STX (0x02)
+        stream << (quint8)0x02;
+
+        // 2. 发送命令字符串
+
+        stream.writeRawData(command.constData(), command.size());
+
+        // 3. 计算 BCC（从 "00" 开始到 ETX 之前）
+        quint8 bcc = 0;
+        for (char c : std::as_const(command)) {
+            bcc ^= c;
+        }
+        bcc ^= 0x03; // 异或 ETX
+
+        // 4. 追加 ETX (0x03)
+        stream << (quint8)0x03;
+
+        // 5. 追加 BCC（以 ASCII 形式）
+        QString bccStr = QString("%1").arg(bcc, 2, 16, QChar('0')).toUpper(); // 转换为2位16进制大写字符串
+        stream.writeRawData(bccStr.toUtf8().constData(), bccStr.size());
+
+        // 6. 追加 CR + LF (0x0D, 0x0A)
+        stream << (quint8)0x0D << (quint8)0x0A;
+        m_a200OnlineCom->writeData(byteArray);
+        QStringList hexList;
+        for (const auto& byte : std::as_const(byteArray)) {
+            // 使用QString::asprintf格式化每个字节为0x的十六进制形式
+            hexList.append(QString::asprintf("0x%02X", static_cast<unsigned char>(byte)));
+        }
+
+        // 使用qDebug()输出
+        qDebug() << "Sent command "<<num<<":"<< hexList.join(" ");
+    }else{
+        qDebug() << "No commands were sent,becasue no command is matched!";
+    }
+
+
+
+
 }
